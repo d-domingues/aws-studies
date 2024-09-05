@@ -1,9 +1,15 @@
 The cloud
 
+Cloud Characteristics
+- On-demand self-service: Users can provision resources without needing provider interaction.
+- Broad network access: Resources accessible over the network via various platforms.
+- Multi-tenancy & resource pooling: Multiple customers share infrastructure securely and privately.
+- Elasticity & scalability: Resources scale quickly based on demand.
+- Measured service: Usage is measured, and users pay accordingly.
+
 AWS operational value
 - Multiregional presence
 - Highly experienced security engineers
-- Experience in the retail sphere (?)
 
 High Availability
 - Eliminates single points of failure
@@ -18,6 +24,11 @@ High Availability
 
 Metered payment model
 - Multiple config options for cost-effective options
+
+Cloud pricing
+- compute time
+- amound and type of data stored
+- egress of data only (not ingress)
 
 Server virtualization:
 - Partition of physical devices into multiple smaller virtual devices.
@@ -34,7 +45,7 @@ IaaS: Services that give control over compute and storage resources
 - VPC
 - EBS
 
-PaaS: Services that hide infra. complexity behind a simple interface
+PaaS: Hide infra. complexity with a simple interface, care only about apps and data 
 - Elastic Beanstalk
 - RDS
 - Lambda
@@ -45,23 +56,25 @@ SaaS: Services that provide software to users through the network
 - WorkSpaces
 - Chime
 
-Scalability
-- Add preconfigured compute resources to meet increasing demand.
-
-Elasticity 
-- Increase/decrease compute resources by demand.
-
 Scalable services: 
-- Many serverss operating (ASG).
+- Many servers operating (ASG).
 - Automated Infrastructure Administration Systems (SSM)
 
 6 advantages of the cloud:
-- Trade fixed (capital) expense for variable (operating) expense
+- Trade fixed expense (CAPEX) for variable expense (OPEX)
 - Benefit from massive economies of scale
 - Stop guessing capacity
 - Increase speed and agility
 - Stop spending money running and maintaining data centers
 - Go global in minutes
+
+Problems solved by the cloud
+- Flexibility: change resource types when needed
+- Cost-Effectiveness: pay as you go, for what you use
+- Scalability: accommodate larger loads by making hardware stronger or adding additional nodes
+- Elasticity: ability to scale out and scale-in when needed
+- High-availability and fault-tolerance: build across data centers
+- Agility: rapidly develop, test and launch software applications
 
 ----------------------------------------------------------------
 AWS account
@@ -406,7 +419,7 @@ Key Management Service (KMS):
   • Redshift (key: aws/redshift)
   • RDS (key: aws/rds)
   • EFS
-- encryption enabled by default
+- encryption enabled by default (services that transfer data to S3)
   • CloudTrail Logs
   • S3 Glacier
   • Storage Gatewy
