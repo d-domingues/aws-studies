@@ -72,9 +72,6 @@ Problems solved by the cloud
 • High-availability and fault-tolerance: build across data centers
 • Agility: rapidly develop, test and launch software applications
 
-_________________________________________________________________________________________
-Account managment, billing and support
-
 Free services
 • IAM
 • VPC
@@ -172,11 +169,14 @@ AWS Organizations:
 • consolidated billing across all accounts
 • volume discounts from aggregated usage
 • use case: A company wants to integrate an external vendor's operations.
+• Best practices
+    - Restrict account privileges using Service Control Policies (SCP)
+    - Create AWS accounts per department
 
 Service control policies (SCPs)
 • centrally manage all users abd role permissions in an AWS Organization
 
-Cost explorer diagrams:
+Cost explorer diagrams
 • allow designing graphs within the browser to track account spendings.
 
 AWS Pricing Calculator
@@ -239,9 +239,6 @@ AWS Trusted Advisor
 • Pay less by using more: volume discounts
 • Pay less as AWS grows
 
-_________________________________________________________________________________________
-AWS environment
-
 Region designation codes example:
 • US-west-2b (Region: 'US-west-2' AZ: 'b')
 
@@ -302,18 +299,19 @@ Resource automation
 • improve administration processes.
 
 Edge locations give benefits to:
-• Gateways (Load balancers)
 • CDN CloudFront.
-(LB can be used as a CloudFront origin)
+• Gateways - Load balancers (LB can be used as a CloudFront origin)
 
 CloudFront distributions
 • provide reduced latency to the user.
 
-Route 53
-• Manage domain name registrations and traffic routing.
-
 AWS Shield
-• Counter the threat of DDoS attacks.
+• provides DDoS attack protection to:
+    - Amazon CloudFront
+    - Elastic Load Balancing (ELB)
+    - Amazon Route 53
+    - AWS Global Accelerator
+    - Elastic IP Addresses
 
 AWS Web App Firewall
 • Protect web apps from web-based attacks.
@@ -365,7 +363,7 @@ Shared responsibility model
         - Automated OS patching
         - Audit the underlying instance and disks & guarantee it functions
     - S3:
-        -	Guarantee unlimited storage
+        - Guarantee unlimited storage
         - Guarantee encryption
         - Ensure separation of the data between different customers
         - Ensure AWS employees can’t access your data
@@ -380,9 +378,6 @@ Service Health Dashboard
 
 Acceptable Use Policy
 • Information on the limits AWS imposes on how resources can be used.
-
-_________________________________________________________________________________________
-AWS security and AWS Artifact
 
 IAM
 • Identity and Access Management.
@@ -471,11 +466,10 @@ Key Management Service (KMS):
     - Redshift (key: aws/redshift)
     - RDS (key: aws/rds)
     - EFS
-• encryption enabled by default (services that transfer data to S3)
+• encryption enabled by default
     - CloudTrail Logs
     - S3 Glacier
     - Storage Gatewy
-    - Redshift
 • Customer Managed Key (CMK):
     - keys managed by the customer
     - e.g. A company wanting to create and use its own encryption keys
@@ -529,157 +523,6 @@ AWS Artifact (not AWS CodeArtifact)
 • view PCI or ISO reports, and accept agreements
 • AWS security and compliance reports
 • discovering whether an AWS service is compliant with your organization’s regulatory requirements
-
-_________________________________________________________________________________________
-AWS Resources and monitoring
-
-Log in on AWS Management Console:
-• Root user: email, password
-• IAM user: account alias, username, password
-
-Management console session
-• lasts 12 hours.
-
-Resources on AWS
-• Are per region
-• Root user can view all resources available on each region
-
-Resource tags
-• Must have a key and optional value.
-• don't have to be unique
-• case-sensitive
-
-AWS CLI requirements
-• Access key ID
-• Secret access key
-• Access to TCP port 443.
-
-Install AWS CLI on Windows 10:
-• MSI installer
-• Python and pip
-
-command `aws configure`
-• specify the default region
-• specify the access key ID
-• specify the secret key
-
-CLI can display:
-• Text
-• JSON
-• Tables
-
-SDKs
-• To wite apps to interact with AWS services
-
-SDKs languages
-• JavaScript
-• Node
-• Python
-• Java
-• PHP
-...
-
-IoT SDK languages:
-• C++
-• Python
-• Java
-• js
-...
-
-CLI 
-• programming running on Linux, macOS, Windows
-• to interact with AWS services from the terminal
-
-CloudWatch
-• For monitoring every cloud resource and application on AWS
-• collect and track metrics, collect and monitor log files, and set alarms
-• CloudWatch Metrics: Monitor the performance of services and billing.
-    - Example: Monitor CPU utilization of an EC2 instance.
-• CloudWatch Alarms: Automate notifications using SNS and trigger EC2 actions based on a metric.
-    - Example: Trigger an alarm when CPU utilization exceeds 80%.
-• CloudWatch Logs: Store and search logs from servers, apps, and services (EC2, Lambda).
-    - Example: Capture and analyze DNS query logs from an EC2 instance.
-• CloudWatch Events (EventBridge): Respond to resource changes or schedule-based actions.
-    - Monitors events that cause changes in resources
-    - Management console sign-in events
-    - Example: Automatically stop an EC2 instance on a schedule.
-
-CloudTrail
-• Record the history of API calls activity on an account (activity of users)
-• Provides governance compliance and audit for the account
-    - Example: Log every call made to the S3 API.
-    - Example: A resource was deleted, identify who's responsible
-
-Route 53 health checks
-• Monitor the health and performance of an application
-
-Billing metric
-• only available on us-east-1 region
-
-x-ray
-• analyze and debug production and distributed applications
-
-Health Dashboard
-• Provide alerts and remediation guidence 
-• When AWS is experiencing events that might affect the costumer
-
-CodeGuru
-• Developer tool
-• provide recommendation for code quality (such as sonarQube)
-
-Metric Filters
-• Extract metric info from logs: Create metrics from log data.
-• Example: Generate a metric from the number of error messages in application logs.
-
-SNS supports:
-• SMS: Send text messages to mobile devices.
-• SQS: Send messages to Amazon Simple Queue Service (SQS) queues for processing.
-• Email: Send notifications via email.
-• HTTP/HTTPS: Send notifications to HTTP/HTTPS endpoints.
-• Lambda: Trigger AWS Lambda functions to execute code in response to notifications.
-• Push Notif.: services like Apple Push Notif Service (APNS); Google Cloud Messaging (GCM).
-
-CloudTrail Triggers - API actions:
-• Viewing a resource like an S3 bucket from the management console
-• Listing IAM users from CLI
-
-CloudTrail event history
-• stored the las 90 days of management events for each region
-• more cost-effective than streaming logs to CloudWatch by creating a trail.
-
-keeping track of all S3 downloads forever.
-• Use CloudTrail to log every time a download from S3 bucket happens.
-• Set CloudTrail to send these logs to CloudWatch so you can monitor them.
-• Make sure CloudWatch is set to never delete these logs.
-
-CloudTrail log file integrity validation:
-• uses hashing to verify if any log file was deleted from S3.
-
-Cost Explorer:
-• cost and usage reports show the monthly costs of services (reserved EC2)
-
-reserved instances allowed services:
-• EC2
-• RDS
-• ElastiCache
-• Redshift
-• DynamoDB
-
-Reserved Instances Utilization:
-• reports to show how much money was saved using reserved instances
-• show potential savings if a reserved instance was used.
-
-Launch/manage AWS Services
-• AWS Management Console:
-    - UI-based using the web interface.
-• AWS CLI (Command Line Interface):
-    - Command-based using terminal commands.
-• AWS CDK (Cloud Dev Kit):
-    - Code-based Infrastructure as Code (IaC) using programming languages.
-• AWS CloudFormation:
-    - IaC defining the CloudFormation template in JSON or YAML.
-_________________________________________________________________________________________
-Core Compute Services
 
 EC2 Amazon Machine Images (AMI)
 • Source image from which an instance's primary storage volume is built
@@ -767,9 +610,6 @@ Instance types:
 • Accelerated computing: GPU workloads
 • Storage optimized: High I/O storage
 • HPC optimized: Scientific simulations
-
-_________________________________________________________________________________________
-Core Storage Services
 
 Simple Storage Service (s3)
 • allows to store objects (files) in “buckets” (directories) like:
@@ -894,9 +734,6 @@ OpsHub
 • user-friendly graphical user interface
 • no need for CLI or REST APIs
 
-_________________________________________________________________________________________
-Core DB services
-
 Relational DB stores data in columns (attributes) and rows (records).
 
 Non-relational DB stores data in collections or items.
@@ -932,8 +769,6 @@ VPC Peering - Private connection between two VPCs.
 Security Group vs. NACL
 • Security Group is a firewall that operates at the instance level
 • NACL is a firewall that operates at the subnet level. 
-_________________________________________________________________________________________
-Networking service
 
 defaultVPC
 • Created by default for each account
@@ -1010,7 +845,8 @@ Direct Connect
 Transit Gateway
 • connect 1000's of VPC and on-pren networks (site-to-site, direct connect)
 
-
+Route 53
+• Manage domain name registrations and traffic routing.
 
 Route 53 DNS Registration
 • Register and manage domains directly with Route 53
@@ -1034,10 +870,6 @@ Routing Policies
     - Automatically redirects traffic to a backup resource if the primary resource fails.
 • Multivalue Answer
     - Provides multiple random healthy resource IP addresses in response to DNS queries
-
-Route 53 Health Checks
-• monitor the health and performance of your application
-• Can check endpoints via HTTP, HTTPS, or TCP.
 
 CloudWatch Alarms
 • Trigger actions based on predefined thresholds.
@@ -1079,16 +911,9 @@ private connections from a VPC using VPC Endpoint Gateway
 • S3
 • DynamoDB
 
-
-_________________________________________________________________________________________
-Database and analysis Services
-
-
 Database migration service (DMS)
 • migrate an on-prem DB to an AWS DB service
 • allow the use of the BD during the migration
-_________________________________________________________________________________________
-Other compute services
 
 AWS Batch
 • compute service to run scheduled workloads
@@ -1105,8 +930,160 @@ API Gateway
 • combined with lambda for a fully serverless infrastructure
 • allow the deploy of the WAF
 
-_________________________________________________________________________________________
-Cloud integrations
+Log in on AWS Management Console:
+• Root user: email, password
+• IAM user: account alias, username, password
+
+Management console session
+• lasts 12 hours.
+
+Resources on AWS
+• Are per region
+• Root user can view all resources available on each region
+
+Resource tags
+• Must have a key and optional value.
+• don't have to be unique
+• case-sensitive
+
+AWS CLI requirements
+• Access key ID
+• Secret access key
+• Access to TCP port 443.
+
+Install AWS CLI on Windows 10:
+• MSI installer
+• Python and pip
+
+command `aws configure`
+• specify the default region
+• specify the access key ID
+• specify the secret key
+
+CLI can display:
+• Text
+• JSON
+• Tables
+
+SDKs
+• To wite apps to interact with AWS services
+
+SDKs languages
+• JavaScript
+• Node
+• Python
+• Java
+• PHP
+...
+
+IoT SDK languages:
+• C++
+• Python
+• Java
+• js
+...
+
+CLI 
+• programming running on Linux, macOS, Windows
+• to interact with AWS services from the terminal
+
+CloudWatch
+• For monitoring every cloud resource and application on AWS
+• collect and track metrics, collect and monitor log files, and set alarms
+• CloudWatch Metrics: Monitor the performance of services and billing.
+    - Example: Monitor CPU utilization of an EC2 instance.
+• CloudWatch Alarms: Automate notifications using SNS and trigger EC2 actions based on a metric.
+    - Example: Trigger an alarm when CPU utilization exceeds 80%.
+• CloudWatch Logs: Store and search logs from servers, apps, and services (EC2, Lambda).
+    - Example: Capture and analyze DNS query logs from an EC2 instance.
+• CloudWatch Events (EventBridge): Respond to resource changes or schedule-based actions.
+    - Monitors events that cause changes in resources
+    - Management console sign-in events
+    - Example: Automatically stop an EC2 instance on a schedule.
+
+CloudTrail
+• Record the history of API calls activity on an account (activity of users)
+• Provides governance compliance and audit for the account
+    - Example: Log every call made to the S3 API.
+    - Example: A resource was deleted, identify who's responsible
+
+Route 53 health checks
+• Monitor the health and performance of an application
+• Can check endpoints via HTTP, HTTPS, or TCP.
+
+Billing metric
+• only available on us-east-1 region
+
+x-ray
+• analyze and debug production and distributed applications
+
+Health Dashboard
+• Provide alerts and remediation guidence 
+• When AWS is experiencing events that might affect the costumer
+
+CodeGuru
+• Developer tool
+• provide recommendation for code quality (such as sonarQube)
+
+Metric Filters
+• Extract metric info from logs: Create metrics from log data.
+• Example: Generate a metric from the number of error messages in application logs.
+
+SNS supports:
+• SMS: Send text messages to mobile devices.
+• SQS: Send messages to Amazon Simple Queue Service (SQS) queues for processing.
+• Email: Send notifications via email.
+• HTTP/HTTPS: Send notifications to HTTP/HTTPS endpoints.
+• Lambda: Trigger AWS Lambda functions to execute code in response to notifications.
+• Push Notif.: services like Apple Push Notif Service (APNS); Google Cloud Messaging (GCM).
+
+CloudTrail Triggers - API actions:
+• Viewing a resource like an S3 bucket from the management console
+• Listing IAM users from CLI
+
+CloudTrail event history
+• stored the las 90 days of management events for each region
+• more cost-effective than streaming logs to CloudWatch by creating a trail.
+
+keeping track of all S3 downloads forever.
+• Use CloudTrail to log every time a download from S3 bucket happens.
+• Set CloudTrail to send these logs to CloudWatch so you can monitor them.
+• Make sure CloudWatch is set to never delete these logs.
+
+CloudTrail log file integrity validation:
+• uses hashing to verify if any log file was deleted from S3.
+
+Cost Explorer:
+• cost and usage reports show the monthly costs of services (reserved EC2)
+
+reserved instances allowed services:
+• EC2
+• RDS
+• ElastiCache
+• Redshift
+• DynamoDB
+
+Reserved Instances Utilization:
+• reports to show how much money was saved using reserved instances
+• show potential savings if a reserved instance was used.
+
+Launch/manage AWS Services
+• AWS Management Console:
+    - UI-based using the web interface.
+• AWS CLI (Command Line Interface):
+    - Command-based using terminal commands.
+• AWS CDK (Cloud Dev Kit):
+    - Code-based Infrastructure as Code (IaC) using programming languages.
+• AWS CloudFormation:
+    - IaC defining the CloudFormation template in JSON or YAML.
+
+OpsWorks
+configuration management service
+provides managed instances of Chef and Puppet
+Chef and Puppet are automation platforms that allow you to use
+code to automate the configurations of your servers.
+AWS OpsWorks lets you use Chef and Puppet to automate how servers are
+configured, deployed, and managed across your EC2 instances or on-premises compute environments.
 
 SQS
 • Highly scalabille managed queue service
@@ -1145,7 +1122,6 @@ data replication across multiple AZs by default (High Availability)
 • Amazon SQS
 • Amazon SNS
 
-
 Kinesis
 • Managed service
 • Collect, process, and analyze data at any scale
@@ -1154,27 +1130,19 @@ Kinesis
 Application Migration Service (MGN)
 • migration of a on-prem server to an AWS EC2 instance
 
-
-
-
-_________________________________________________________________________________________
-
-
-
-
-
-
-Use Amazon Transcribe to convert speech to text for downstream analysis.
-
-use Amazon Polly to convey the text results via speech
-
-
-Shield Advanced provides DDoS attack protection to:
-• Amazon CloudFront
-• Elastic Load Balancing (ELB)
-• Amazon Route 53
-• AWS Global Accelerator
-• Elastic IP Addresses
+Machine Learning
+• Rekognition: face detection, labeling, celebrity recognition
+• Transcribe: audio to text (ex: subtitles)
+• Polly: text to audio 
+• Translate: translations 
+• Lex: build conversational bots – chatbots 
+• Connect: cloud contact center 
+• Comprehend: natural language processing 
+• SageMaker: machine learning for every developer and data scientist 
+• Forecast: build highly accurate forecasts 
+• Kendra: ML-powered search engine 
+• Personalize: real-time personalized recommendations 
+• Textract: detect text and data in documents
 
 Web application firewall (WAF)
 • protection at layer 7 (HTTP)
@@ -1188,8 +1156,6 @@ Web application firewall (WAF)
     - Amazon API Gateway
     - AWS AppSync
 
-
-
 Amazon Inspector
 • improve the security and compliance of apps
 • automated security assessment
@@ -1197,20 +1163,16 @@ Amazon Inspector
 • deviations from best practices
 • for apps deployed on your Amazon EC2
 
-
-
-
-
 migrate data and applications from on-premises to Cloud
 • Leverage AWS Professional Services to accelerate the infrastructure migration
 • Utilize APN to build a custom solution for this infrastructure migration
-
-
-
-
 
 AWS Systems Manager
 • unified user interface to view operational data from multiple AWS services
 • automate operational tasks
 
-
+AWS Compute Optimizer recommendations for:
+• EC2 instances
+• EC2 Auto Scaling groups
+• EBS
+• AWS Lambda
