@@ -833,7 +833,7 @@ VPC Flow Logs
 
 Site-to-Site VPN
 • creates an encrypted network path between your on-premises network and your AWS Cloud network.
-• This connection between your on-premises network and your AWS Cloud network uses the internet.
+• This connection uses the public  internet.
 
 ClientVPN
 • OpenVPN from costumer computer to his VPN
