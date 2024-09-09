@@ -4152,11 +4152,6 @@
     "solutions": [2]
   },
   {
-    "question": "Which AWS service supports an in-memory data structure store, compatible with Redis, that delivers sub-millisecond latency for use cases such as caching, session stores, and real-time analytics?",
-    "options": ["Amazon RDS", "Amazon Redshift", "Amazon MemoryDB", "Amazon DynamoDB"],
-    "solutions": [2]
-  },
-  {
     "question": "A company requires a single service which can manage their backup and restore requirements, their data lakes, and archives all in one place. Which AWS service is suitable for all these use cases?",
     "options": [
       "Amazon FSx for Lustre.",

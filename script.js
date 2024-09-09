@@ -1,3 +1,6 @@
+const fs = require('fs');
+const questions = require('./questions.json');
+
 function extractQuestionsAndOptions() {
   const questionElements = document.querySelectorAll('div.result-pane--question-result-pane--EdDud');
 
@@ -21,15 +24,11 @@ function extractQuestionsAndOptions() {
   });
 }
 
-const questions = extractQuestionsAndOptions();
-console.log(questions);
-
-//
 function formatQuestionsInHTML(jsonData) {
   return [
     `
       <script>
-        function showSolution(node, solution) {
+          function showSolution(node, solution) {
           node.insertAdjacentText('afterend', solution);
         }
       </script>`,
@@ -65,8 +64,6 @@ function formatQuestionsInHTML(jsonData) {
   ].join('');
 }
 
-console.log(formatQuestionsInHTML(questions));
-
 function removeDuplicateQuestions(arr) {
   const seenQuestions = new Set();
   const resultArray = [];
@@ -81,5 +78,18 @@ function removeDuplicateQuestions(arr) {
   return resultArray;
 }
 
-const uniqueArray = removeDuplicateQuestions(questions);
-console.log(uniqueArray);
+// Function to get 5 random questions
+function getRandomQuestions(nQuestions) {
+  const shuffled = questions.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, nQuestions);
+}
+
+// Write the random questions to an HTML file
+function createExamFile(nQuestions) {
+  const randomQuestions = getRandomQuestions(nQuestions);
+  const htmlContent = formatQuestionsInHTML(randomQuestions);
+  fs.writeFileSync('exam.html', htmlContent);
+  console.log('exam.html has been created!');
+}
+
+createExamFile(65);
