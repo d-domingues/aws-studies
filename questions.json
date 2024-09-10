@@ -5643,7 +5643,7 @@
     "solutions": [1, 2]
   },
   {
-    "question": "Which of the following acts as a virtual ﬁrewall at the Amazon EC2 instance level to control traffic for one or more instances?",
+    "question": "Which of the following acts as a virtual firewall at the Amazon EC2 instance level to control traffic for one or more instances?",
     "options": ["Network Access Control Lists (ACL)", "Route table", "Security groups", "Virtual private gateways (VPG)"],
     "solutions": [2]
   },

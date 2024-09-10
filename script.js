@@ -1,95 +1,143 @@
 const fs = require('fs');
 const questions = require('./questions.json');
 
-function extractQuestionsAndOptions() {
-  const questionElements = document.querySelectorAll('div.result-pane--question-result-pane--EdDud');
-
-  return Array.from(questionElements).map((questionElement) => {
-    const questionText = Array.from(questionElement.querySelectorAll('div.result-pane--question-format--NZ-V1 p'))
-      .map((node) => node.innerText.trim())
-      .join('');
-
-    const optsAndCorrect = Array.from(questionElement.querySelectorAll('.result-pane--answer-result-pane--HLvLj')).reduce(
-      (acc, next, idx) => ({
-        options: [...acc.options, next.querySelector('div.answer-result-pane--answer-body--6Y3ge p').innerText.trim()],
-        solutions: next.querySelector('.answer-result-pane--answer-correct--wjhP-') ? [...acc.solutions, idx] : acc.solutions,
-      }),
-      { options: [], solutions: [] }
-    );
-
-    return {
-      question: questionText,
-      ...optsAndCorrect,
-    };
-  });
-}
-
 function formatQuestionsInHTML(jsonData) {
-  return [
-    `
-      <script>
-          function showSolution(node, solution) {
-          node.insertAdjacentText('afterend', solution);
-        }
-      </script>`,
-    ...jsonData.map((item, index) => {
-      const questionText = `
-      <strong>Question ${index + 1}:</strong> ${item.question}
-      `;
+  const progress = `<progress value="0" max="${jsonData.length}" style="display:block;width:auto;"></progress>`;
 
-      // Format the options with uppercase letters
+  const newLine = '<br><br>';
+
+  const skipQuizzBtn = '<button onclick="onFinish(); this.hidden = true;">SKIP QUIZZ</button>';
+
+  const report = `
+  <div hidden>
+    <b id="correct-count">Correct count:</b>
+    <br>
+    <b id="incorrect-answers">Incorrect answers:</b>
+    <br>
+    <b id="rate">Rate:</b>
+    <br>
+    <br>
+    <hr>
+  </div>
+`;
+
+  const script = `
+<script>
+  let correct = 0;
+  let incorrectAnswers = [];
+
+  function showFormData(formNode, solution) {
+    const formData = new FormData(formNode);
+    const formValue = [...formData.keys()].map((key) => key);
+    isCorrectAnswer = solution.every(el => formValue.includes(String(el)));
+    
+    console.log(formValue, solution);
+    console.log(isCorrectAnswer)
+
+    if (formValue.length == solution.length) {
+      formNode.hidden = true;
+
+      // correct answer
+      if (isCorrectAnswer) correct++;
+      else incorrectAnswers.push([...document.forms].indexOf(formNode) + 1)
+      
+      const nextForm = formNode?.nextElementSibling;
+      // next question
+      if (nextForm) {
+        nextForm.hidden = false;
+        document.querySelector('progress').value += 1;
+      }
+      // end of quizz
+      else onFinish();
+    }
+  }
+
+  function onFinish() {
+    document.body.classList.add('show-correct')
+    document.querySelectorAll('input[type="checkbox"]')?.forEach(el => el.disabled = true)
+
+    document.querySelector('#correct-count')?.insertAdjacentText('afterend', ' ' + correct);
+    document.querySelector('#incorrect-answers')?.insertAdjacentText('afterend', ' ' + incorrectAnswers); 
+
+    const rate = Math.floor(correct / ${jsonData.length} * 100);
+    document.querySelector('#rate')?.insertAdjacentText('afterend', ' ' + rate + '% ' + (rate >= 70 ? '(PASS 🏆)' : '(FAIL 😞)'));
+    document.querySelectorAll('[hidden]').forEach(n => n.hidden = false);
+  }
+</script>`;
+
+  const styles = `
+<style>
+  body {
+    font-family: sans-serif;
+  }
+
+  body.show-correct .correct-answer {
+    outline: lightgreen 4px solid;
+  }
+</style>
+`;
+
+  const html = jsonData
+    .map((item, index) => {
+      const questionText = `<strong>Question ${index + 1}:</strong> ${item.question}`;
+
       const optionsText = item.options
         .map((option, i) => {
-          const letter = String.fromCharCode(65 + i); // 'A', 'B', 'C', etc.
+          const styleClass = item.solutions.includes(i) ? 'correct-answer' : '';
+
           return `
-      <strong>${letter}</strong>: ${option}`;
+  <input class="${styleClass}" type="checkbox" name="${i}" id="opt-${index}-${i}" onchange="showFormData(this.parentNode, ${JSON.stringify(
+            item.solutions
+          )})" />
+  <label style="line-height: 2.2rem;" for="opt-${index}-${i}">${option}</label>
+  `;
         })
         .join('<br>');
 
-      const solutionText = item.solutions
-        .map((solutionIndex) => {
-          const letter = String.fromCharCode(65 + solutionIndex);
-          return `option ${letter}`;
-        })
-        .join(', ');
+      return `
+<form style="font-size: 1.2rem;" ${index != 0 ? 'hidden' : ''}>
+  ${questionText}
+  ${newLine}
+  ${optionsText}
+  ${newLine}
+</form>`;
+    })
+    .join('');
 
-      const solutionSection = `
-      <button style="margin-right: 1rem;" onclick="showSolution(this, '${solutionText}')">SOLUTION</button>
-      `;
-
-      const separator = '<hr>';
-
-      return [questionText, optionsText, solutionSection, separator].join('<br><br>');
-    }),
-  ].join('');
+  return `${progress}${styles}${script}${skipQuizzBtn}${report}${html}`;
 }
 
-function removeDuplicateQuestions(arr) {
-  const seenQuestions = new Set();
-  const resultArray = [];
+function filterQuestionsByKeywords(keywords = []) {
+  if (keywords.length == 0) return questions;
 
-  arr.forEach((obj, idx) => {
-    if (!seenQuestions.has(obj.question)) {
-      seenQuestions.add(obj.question);
-      resultArray.push({ ...obj }); // Adding a copy of the object
-    }
-  });
-
-  return resultArray;
-}
-
-// Function to get 5 random questions
-function getRandomQuestions(nQuestions) {
-  const shuffled = questions.sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, nQuestions);
+  return questions.filter((q) =>
+    keywords.some((keyword) => {
+      const lowerKeyword = keyword.toLowerCase().trim();
+      return (
+        q.question.toLowerCase().includes(lowerKeyword) || q.options.some((option) => option.toLowerCase().includes(lowerKeyword))
+      );
+    })
+  );
 }
 
 // Write the random questions to an HTML file
-function createExamFile(nQuestions) {
-  const randomQuestions = getRandomQuestions(nQuestions);
+function createExamFile(nQuestions, keywords = []) {
+  const shuffled = filterQuestionsByKeywords(keywords).sort(() => 0.5 - Math.random());
+  const randomQuestions = shuffled.slice(0, nQuestions);
   const htmlContent = formatQuestionsInHTML(randomQuestions);
+
   fs.writeFileSync('exam.html', htmlContent);
   console.log('exam.html has been created!');
 }
 
-createExamFile(65);
+createExamFile(30, [
+  'vpn',
+  'vpc',
+  'Internet Gateway',
+  'NAT Gateway',
+  'NACL',
+  'Security Groups',
+  'Direct Connect',
+  'PrivateLink',
+  'Transit Gateway',
+]);

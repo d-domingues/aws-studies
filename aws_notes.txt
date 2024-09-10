@@ -817,10 +817,10 @@ Give access to instances in the VPC private subnet
 VPC endpoints
 • Provide access to a service within the VPC using a private network
 • Aleternative to using VPC perring and NAT (more scalable)
-• VPC Endpoint Gateway (in transit):
+• VPC Gateway Endpoint (in transit):
     - S3 
     - DynamoDB 
-• VPC Endpoint Interface (at rest):
+• VPC Interface Endpoint (at rest):
     - other services
 • PrivateLink
     - connect to a 3rd party VPC through the private network
