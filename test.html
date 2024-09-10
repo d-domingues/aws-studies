@@ -1,0 +1,15 @@
+<script>
+  function showSolution(node, solution) {
+    node.insertAdjacentText('afterend', solution);
+  }
+
+  function showFormData(node) {
+    const formData = new FormData(node.parentNode);
+    console.log(Array.from(formData.keys()).map((key) => key));
+  }
+</script>
+
+<form>
+  <input type="checkbox" name="opt1" onchange="showFormData(this)" />
+  <input type="checkbox" name="opt2" onchange="showFormData(this)" />
+</form>

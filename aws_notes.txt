@@ -829,7 +829,7 @@ VPN connection
 • Uses the public internet for transport but can be encrypted.
 
 VPC Flow Logs
-• capture information about inbound and outbound IP traffic on network interfaces in a VPC
+• capture inbound/outbound IP traffic to/from a VPC
 
 Site-to-Site VPN
 • creates an encrypted network path between your on-premises network and your AWS Cloud network.
@@ -1176,3 +1176,8 @@ AWS Compute Optimizer recommendations for:
 • EC2 Auto Scaling groups
 • EBS
 • AWS Lambda
+
+
+managed Windows virtual desktops and applications over secure networks
+• AWS Site-to-Site VPN (VPN)
+• Amazon Workspaces (VDI)
