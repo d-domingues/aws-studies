@@ -41,7 +41,7 @@ function formatQuestionsInHTML(jsonData) {
       const nextForm = formNode?.nextElementSibling;
       
       // next question
-      if (nextForm) nextForm.hidden = false;
+      if (+formNode.dataset.formidx < ${jsonData.length - 1}) nextForm.hidden = false;
       // end of quizz
       else onFinish();
     }
@@ -117,7 +117,7 @@ function formatQuestionsInHTML(jsonData) {
     }, '');
 
     const formWarpper = `
-<form ${index != 0 ? 'hidden' : ''} onchange="onChange(this, ${JSON.stringify(item.solutions)})">
+<form data-formidx="${index}"  ${index != 0 ? 'hidden' : ''} onchange="onChange(this, ${JSON.stringify(item.solutions)})">
   ${questionText}
   <ul class="options-list">
     ${optionsText}
@@ -158,7 +158,7 @@ function createExamFile(nQuestions, keywords = []) {
   fs.writeFileSync('done.json', JSON.stringify([...doneQuestions, ...nextDoneQuestions]));
 }
 
-createExamFile(25, [
+createExamFile(2, [
   'vpn',
   'vpc',
   'Gateway',
