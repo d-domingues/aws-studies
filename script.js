@@ -1,40 +1,37 @@
-const fs = require('fs');
 const questions = require('./questions.json');
+const doneQuestions = require('./done.json');
+const fs = require('fs');
 
 function formatQuestionsInHTML(jsonData) {
-  const progress = `<progress value="0" max="${jsonData.length}" style="display:block;width:auto;"></progress>`;
-
-  const newLine = '<br><br>';
+  const progress = `<progress value="0" max="${jsonData.length}"></progress>`;
 
   const skipQuizzBtn = '<button onclick="onFinish(); this.hidden = true;">SKIP QUIZZ</button>';
 
   const report = `
   <div hidden>
     <b id="correct-count">Correct count:</b>
-    <br>
     <b id="incorrect-answers">Incorrect answers:</b>
-    <br>
     <b id="rate">Rate:</b>
-    <br>
-    <br>
     <hr>
   </div>
 `;
 
   const script = `
 <script>
+  window.onload = function() {
+    shuffleForm();
+  };
+
   let correct = 0;
   let incorrectAnswers = [];
 
-  function showFormData(formNode, solution) {
+  function onChange(formNode, solution) {
     const formData = new FormData(formNode);
     const formValue = [...formData.keys()].map((key) => key);
     isCorrectAnswer = solution.every(el => formValue.includes(String(el)));
     
-    console.log(formValue, solution);
-    console.log(isCorrectAnswer)
-
     if (formValue.length == solution.length) {
+      document.querySelector('progress').value += 1;
       formNode.hidden = true;
 
       // correct answer
@@ -42,11 +39,9 @@ function formatQuestionsInHTML(jsonData) {
       else incorrectAnswers.push([...document.forms].indexOf(formNode) + 1)
       
       const nextForm = formNode?.nextElementSibling;
+      
       // next question
-      if (nextForm) {
-        nextForm.hidden = false;
-        document.querySelector('progress').value += 1;
-      }
+      if (nextForm) nextForm.hidden = false;
       // end of quizz
       else onFinish();
     }
@@ -60,8 +55,15 @@ function formatQuestionsInHTML(jsonData) {
     document.querySelector('#incorrect-answers')?.insertAdjacentText('afterend', ' ' + incorrectAnswers); 
 
     const rate = Math.floor(correct / ${jsonData.length} * 100);
-    document.querySelector('#rate')?.insertAdjacentText('afterend', ' ' + rate + '% ' + (rate >= 70 ? '(PASS 🏆)' : '(FAIL 😞)'));
+    document.querySelector('#rate')?.insertAdjacentText('afterend', ' ' + rate + '% ' + (rate >= 70 ? '(PASS)' : '(FAIL)'));
     document.querySelectorAll('[hidden]').forEach(n => n.hidden = false);
+  }
+  
+  function shuffleForm() {
+    const form = document.querySelector('.options-list');
+    const optionNodes = [...form.children];
+    optionNodes.sort(() => Math.random() - 0.5);
+    optionNodes.forEach(optNode => form.appendChild(optNode));
   }
 </script>`;
 
@@ -69,75 +71,103 @@ function formatQuestionsInHTML(jsonData) {
 <style>
   body {
     font-family: sans-serif;
+    font-size: 1.2rem;
   }
 
   body.show-correct .correct-answer {
     outline: lightgreen 4px solid;
   }
+
+  progress {
+    display: block;
+    width: auto;
+  }
+
+  #correct-count, #incorrect-answers, #rate {
+    display: block;
+  }
+
+  form {
+    margin-bottom: 2rem;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+
+    & label{
+      line-height: 2.2rem
+    }
+  }
 </style>
 `;
 
-  const html = jsonData
-    .map((item, index) => {
-      const questionText = `<strong>Question ${index + 1}:</strong> ${item.question}`;
+  const html = jsonData.reduce((acc, item, index) => {
+    const questionText = `<strong>Question ${index + 1}:</strong> ${item.question}`;
 
-      const optionsText = item.options
-        .map((option, i) => {
-          const styleClass = item.solutions.includes(i) ? 'correct-answer' : '';
+    const optionsText = item.options.reduce((acc, option, i) => {
+      const input = `<input type="checkbox" name="${i}" id="opt-${index}-${i}" />`;
+      const label = `<label for="opt-${index}-${i}">${option}</label>`;
+      return `${acc}
+      <li class=${item.solutions.includes(i) ? 'correct-answer' : ''}>
+        ${input}
+        ${label}
+      </li>`.trim();
+    }, '');
 
-          return `
-  <input class="${styleClass}" type="checkbox" name="${i}" id="opt-${index}-${i}" onchange="showFormData(this.parentNode, ${JSON.stringify(
-            item.solutions
-          )})" />
-  <label style="line-height: 2.2rem;" for="opt-${index}-${i}">${option}</label>
-  `;
-        })
-        .join('<br>');
-
-      return `
-<form style="font-size: 1.2rem;" ${index != 0 ? 'hidden' : ''}>
+    const formWarpper = `
+<form ${index != 0 ? 'hidden' : ''} onchange="onChange(this, ${JSON.stringify(item.solutions)})">
   ${questionText}
-  ${newLine}
-  ${optionsText}
-  ${newLine}
+  <ul class="options-list">
+    ${optionsText}
+  </ul>
 </form>`;
-    })
-    .join('');
 
-  return `${progress}${styles}${script}${skipQuizzBtn}${report}${html}`;
+    return `${acc}${formWarpper}`.trim();
+  }, '');
+
+  return `${styles}${skipQuizzBtn}${progress}${report}${html}${script}`.trim();
 }
 
 function filterQuestionsByKeywords(keywords = []) {
   if (keywords.length == 0) return questions;
 
-  return questions.filter((q) =>
-    keywords.some((keyword) => {
-      const lowerKeyword = keyword.toLowerCase().trim();
-      return (
-        q.question.toLowerCase().includes(lowerKeyword) || q.options.some((option) => option.toLowerCase().includes(lowerKeyword))
-      );
-    })
+  return questions.filter(
+    (q) =>
+      !doneQuestions.includes(q.index) &&
+      keywords.some((keyword) => {
+        const lowerKeyword = keyword.toLowerCase().trim();
+        return (
+          q.question.toLowerCase().includes(lowerKeyword) ||
+          q.options.some((option) => option.toLowerCase().includes(lowerKeyword))
+        );
+      })
   );
 }
 
 // Write the random questions to an HTML file
 function createExamFile(nQuestions, keywords = []) {
-  const shuffled = filterQuestionsByKeywords(keywords).sort(() => 0.5 - Math.random());
-  const randomQuestions = shuffled.slice(0, nQuestions);
+  const shuffledQuestions = filterQuestionsByKeywords(keywords).sort(() => 0.5 - Math.random());
+  const randomQuestions = shuffledQuestions.slice(0, nQuestions);
+
   const htmlContent = formatQuestionsInHTML(randomQuestions);
+  const nextDoneQuestions = randomQuestions.map((q) => q.index);
 
   fs.writeFileSync('exam.html', htmlContent);
-  console.log('exam.html has been created!');
+  fs.writeFileSync('done.json', JSON.stringify([...doneQuestions, ...nextDoneQuestions]));
 }
 
-createExamFile(30, [
+createExamFile(25, [
   'vpn',
   'vpc',
-  'Internet Gateway',
-  'NAT Gateway',
+  'Gateway',
+  'NAT',
   'NACL',
   'Security Groups',
   'Direct Connect',
   'PrivateLink',
   'Transit Gateway',
+  'endpoint',
+  'Route table',
+  'subnet',
 ]);
