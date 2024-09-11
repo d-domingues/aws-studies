@@ -60,10 +60,11 @@ function formatQuestionsInHTML(jsonData) {
   }
   
   function shuffleForm() {
-    const form = document.querySelector('.options-list');
-    const optionNodes = [...form.children];
-    optionNodes.sort(() => Math.random() - 0.5);
-    optionNodes.forEach(optNode => form.appendChild(optNode));
+    document.querySelectorAll('.options-list').forEach(optsList => {
+      const optionNodes = [...optsList.children];
+      optionNodes.sort(() => Math.random() - 0.5);
+      optionNodes.forEach(optNode => optsList.appendChild(optNode));
+    })
   }
 </script>`;
 
