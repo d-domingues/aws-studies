@@ -158,7 +158,7 @@ function createExamFile(nQuestions, keywords = []) {
   fs.writeFileSync('done.json', JSON.stringify([...doneQuestions, ...nextDoneQuestions]));
 }
 
-createExamFile(2, [
+createExamFile(30, [
   'vpn',
   'vpc',
   'Gateway',

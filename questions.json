@@ -6491,12 +6491,6 @@
     "solutions": [2]
   },
   {
-    "index": 748,
-    "question": "A Cloud Practitioner is creating the business process workflows associated with an order fulfilment system. Which AWS service can assist with coordinating tasks across distributed application components?",
-    "options": ["Amazon SQS", "AWS STS", "Amazon SWF", "Amazon SNS"],
-    "solutions": [2]
-  },
-  {
     "index": 749,
     "question": "What are the advantages of running a database service such as Amazon RDS in the cloud versus deploying on-premise? (Select TWO.)",
     "options": [
