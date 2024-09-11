@@ -154,7 +154,7 @@ function createExamFile(nQuestions, keywords = []) {
   const htmlContent = formatQuestionsInHTML(randomQuestions);
   const nextDoneQuestions = randomQuestions.map((q) => q.index);
 
-  fs.writeFileSync('exam.html', htmlContent);
+  fs.writeFileSync('../../OneDrive/quizz.html', htmlContent);
   fs.writeFileSync('done.json', JSON.stringify([...doneQuestions, ...nextDoneQuestions]));
 }
 

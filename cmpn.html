@@ -1,0 +1,25 @@
+<hello-world></hello-world>
+
+<script>
+  class HelloWorld extends HTMLElement {
+    constructor() {
+      super();
+      const shadow = this.attachShadow({ mode: 'open' });
+
+      const template = document.createElement('template');
+      template.innerHTML = `
+          <style>
+            p {
+              color: blue;
+              font-family: Arial, sans-serif;
+            }
+          </style>
+          <p>Hello World! This is a simple web component.</p>
+        `;
+
+      shadow.appendChild(template.content.cloneNode(true));
+    }
+  }
+
+  customElements.define('hello-world', HelloWorld);
+</script>
