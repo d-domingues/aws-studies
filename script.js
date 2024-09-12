@@ -154,21 +154,41 @@ function createExamFile(nQuestions, keywords = []) {
   const htmlContent = formatQuestionsInHTML(randomQuestions);
   const nextDoneQuestions = randomQuestions.map((q) => q.index);
 
+  console.log(nextDoneQuestions.length);
+
   fs.writeFileSync('../../OneDrive/quizz.html', htmlContent);
-  fs.writeFileSync('done.json', JSON.stringify([...doneQuestions, ...nextDoneQuestions]));
+  // fs.writeFileSync('done.json', JSON.stringify([...doneQuestions, ...nextDoneQuestions]));
 }
 
+/* 
 createExamFile(1000, [
   'vpn',
   'vpc',
   'Gateway',
   'NAT',
+  'access control',
   'NACL',
-  'Security Groups',
+  'Security Group',
   'Direct Connect',
   'PrivateLink',
-  'Transit Gateway',
+  'Transit',
   'endpoint',
   'Route table',
   'subnet',
+  'flow log',
+  'site-to-site',
+  'virtual private',
+  'customer gateway',
+]);
+ */
+
+createExamFile(1000, [
+  'Architected',
+  'Shared Responsibility',
+  'CAF',
+  'Cloud Adoption Framework',
+  'Partner Network',
+  'APN',
+  'Support Plan',
+  'Partner Solution',
 ]);
