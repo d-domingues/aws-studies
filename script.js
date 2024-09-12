@@ -12,7 +12,7 @@ function formatQuestionsInHTML(jsonData) {
     <b id="correct-count">Correct count:</b>
     <b id="incorrect-answers">Incorrect answers:</b>
     <b id="rate">Rate:</b>
-    <hr>
+    <hr />
   </div>
 `;
 
@@ -158,7 +158,7 @@ function createExamFile(nQuestions, keywords = []) {
   fs.writeFileSync('done.json', JSON.stringify([...doneQuestions, ...nextDoneQuestions]));
 }
 
-createExamFile(30, [
+createExamFile(1000, [
   'vpn',
   'vpc',
   'Gateway',

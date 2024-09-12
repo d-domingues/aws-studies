@@ -50,16 +50,6 @@
 
 <!--  -->
 
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
-
-<ul x-data="{ colors: model }">
-  <template x-for="color in colors">
-    <li x-text="color.question"></li>
-  </template>
-</ul>
-
-<!--  -->
-
 <style>
   body {
     font-family: sans-serif;
@@ -146,8 +136,6 @@
 
         const template = document.createElement('template');
         template.innerHTML = `
-
-
             <style>
               progress {
                 display: block;

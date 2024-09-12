@@ -1,0 +1,174 @@
+<script>
+  model = [
+    {
+      index: 0,
+      question:
+        'Which service gives a personalized view of the status of the AWS services that are part of your Cloud architecture so that you can quickly assess the impact on your business when AWS service(s) are experiencing issues?',
+      options: [
+        'AWS Health - Your Account Health Dashboard',
+        'Amazon CloudWatch',
+        'AWS Health - Service Health Dashboard',
+        'Amazon Inspector',
+      ],
+      solutions: [0],
+    },
+    {
+      index: 10,
+      question: 'AWS Marketplace facilitates which of the following use-cases? (Select two)',
+      options: [
+        'Buy Amazon EC2 Standard Reserved Instances (RI)',
+        'Sell Software as a Service (SaaS) solutions to AWS customers',
+        'Purchase compliance documents from third-party vendors',
+        'AWS customer can buy software that has been bundled into customized Amazon Machine Image (AMIs) by the AWS Marketplace sellers',
+        'Raise request for purchasing AWS Direct Connect connection',
+      ],
+      solutions: [1, 3],
+    },
+    {
+      index: 11,
+      question: 'Which of the following AWS services offer block-level storage? (Select two)',
+      options: [
+        'Amazon Elastic File System (Amazon EFS)',
+        'Amazon Simple Storage Service (Amazon S3)',
+        'Amazon Elastic Container Service (Amazon ECS)',
+        'Amazon Elastic Block Store (Amazon EBS)',
+        'Instance Store',
+      ],
+      solutions: [3, 4],
+    },
+    {
+      index: 4,
+      question:
+        'Which AWS service can help you analyze your infrastructure to identify unattached or underutilized Amazon EBS Elastic Volumes?',
+      options: ['Amazon Inspector', 'Amazon CloudWatch', 'AWS Trusted Advisor', 'AWS Config'],
+      solutions: [2],
+    },
+  ];
+
+  answers = [];
+</script>
+
+<!--  -->
+
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+
+<script>
+  currentFormIdx = answers.length;
+
+  let data = (window.onload = function () {
+    document.querySelectorAll('form').forEach((f) => new FormData(f));
+  });
+
+  function handleClick(el, idx) {
+    console.log('hilis', el, idx);
+  }
+
+  function onFinish() {}
+
+  let externalSelectedItems = [1, 2];
+</script>
+
+<!--  -->
+
+<style>
+  body {
+    font-family: sans-serif;
+    font-size: 1.2rem;
+  }
+
+  body.show-correct .correct-answer {
+    outline: lightgreen 4px solid;
+  }
+
+  progress {
+    display: block;
+    width: auto;
+  }
+
+  #correct-count,
+  #incorrect-answers,
+  #rate {
+    display: block;
+  }
+
+  form {
+    margin-bottom: 2rem;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+
+    & label {
+      line-height: 2.2rem;
+    }
+  }
+</style>
+
+<div x-data="{ model, answers, currentFormIdx, ansrs: null }">
+  <button @click="onFinish(); $el.remove()">SKIP QUIZZ</button>
+
+  <progress value="0" :max="model.length"></progress>
+
+  <div hidden>
+    <b id="correct-count">Correct count:</b>
+    <b id="incorrect-answers">Incorrect answers:</b>
+    <b id="rate">Rate:</b>
+    <hr />
+  </div>
+
+  <!--   <input type="radio" value="yes" x-model="answer" />
+  <input type="radio" value="no" x-model="answer" /> -->
+
+  <template x-for="(item, index) in model" :key="index">
+    <form :data-formidx="index" x-show="index == currentFormIdx">
+      <!-- @change="handleClick($el, item.solutions)" -->
+      <strong x-text="1 + index + ':'"></strong>
+      <span x-text="item.question"></span>
+      <ul class="options-list" x-data="{ selectedItems: externalSelectedItems }" x-effect="externalSelectedItems = selectedItems">
+        <template x-for="(opt, optId) in item.options" :key="opt">
+          <li>
+            <input type="checkbox" :value="optId" x-model="selectedItems" />
+            <label x-text="opt"></label>
+          </li>
+        </template>
+
+        <div>Selected Items: <span x-text="selectedItems"></span></div>
+      </ul>
+    </form>
+  </template>
+</div>
+
+<!-- 
+
+<button onclick="onFinish(); this.hidden = true;">SKIP QUIZZ</button>
+
+<progress value="0" max="30"></progress>
+  <div hidden>
+    <b id="correct-count">Correct count:</b>
+    <b id="incorrect-answers">Incorrect answers:</b>
+    <b id="rate">Rate:</b>
+    <hr>
+  </div>
+<form data-formidx="0"   onchange="onChange(this, [0])">
+  <strong>Question 1:</strong> When designing a VPC, what is the purpose of an Internet Gateway?
+  <ul class="options-list">
+    <li class=correct-answer>
+        <input type="checkbox" name="0" id="opt-0-0" />
+        <label for="opt-0-0">Enables Internet communications for instances in public subnets</label>
+      </li>
+      <li class=>
+        <input type="checkbox" name="1" id="opt-0-1" />
+        <label for="opt-0-1">It's a bastion host for inbound management connections</label>
+      </li>
+      <li class=>
+        <input type="checkbox" name="2" id="opt-0-2" />
+        <label for="opt-0-2">Provides Internet access for EC2 instances in private subnets</label>
+      </li>
+      <li class=>
+        <input type="checkbox" name="3" id="opt-0-3" />
+        <label for="opt-0-3">It's used for making VPN connections to a VPC</label>
+      </li>
+  </ul>
+</form>
+-->
