@@ -110,14 +110,14 @@ function formatQuestionsInHTML(jsonData) {
       const input = `<input type="checkbox" name="${i}" id="opt-${index}-${i}" />`;
       const label = `<label for="opt-${index}-${i}">${option}</label>`;
       return `${acc}
-      <li class=${item.solutions.includes(i) ? 'correct-answer' : ''}>
+      <li class="${item.solutions.includes(i) ? 'correct-answer' : ''}">
         ${input}
         ${label}
       </li>`.trim();
     }, '');
 
     const formWarpper = `
-<form data-formidx="${index}"  ${index != 0 ? 'hidden' : ''} onchange="onChange(this, ${JSON.stringify(item.solutions)})">
+<form data-formidx="${index}" ${index != 0 ? 'hidden' : ''} onchange="onChange(this, ${JSON.stringify(item.solutions)})">
   ${questionText}
   <ul class="options-list">
     ${optionsText}
