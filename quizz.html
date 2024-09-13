@@ -1,739 +1,169 @@
-<style>
-  body {
-    font-family: sans-serif;
-    font-size: 1.2rem;
-  }
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Quizz CLF-C02</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+      document.addEventListener('alpine:init', () =>
+        Alpine.data('model', () => ({
+          questions,
+          answers: [],
+          incorrects: [],
 
-  body.show-correct .correct-answer {
-    outline: lightgreen 4px solid;
-  }
+          get correct() {
+            return this.questions.length - this.incorrects.length;
+          },
 
-  progress {
-    display: block;
-    width: auto;
-  }
+          get finished() {
+            return this.answers.length >= this.questions.length;
+          },
 
-  #correct-count, #incorrect-answers, #rate {
-    display: block;
-  }
+          get rate() {
+            return Math.floor((this.correct / this.questions.length) * 100);
+          },
 
-  form {
-    margin-bottom: 2rem;
-  }
+          shuffleNodes(parentElement, tagName) {
+            const childrenArray = [...parentElement.children].filter((el) => el.tagName == tagName);
+            childrenArray.sort(() => Math.random() - 0.5);
+            childrenArray.forEach((child) => parentElement.appendChild(child));
+          },
 
-  ul {
-    list-style-type: none;
-    padding: 0;
+          onSetValue([...solutionOpts], [...selectedOpts]) {
+            if (solutionOpts.length != selectedOpts.length) return;
+            this.answers.push(selectedOpts);
+            if (this.answers.length == this.questions.length) this.onFinish();
+          },
 
-    & label{
-      line-height: 2.2rem
-    }
-  }
-</style>
-<button onclick="onFinish(); this.hidden = true;">SKIP QUIZZ</button><progress value="0" max="30"></progress>
-  <div hidden>
-    <b id="correct-count">Correct count:</b>
-    <b id="incorrect-answers">Incorrect answers:</b>
-    <b id="rate">Rate:</b>
-    <hr>
-  </div>
-<form data-formidx="0"   onchange="onChange(this, [0])">
-  <strong>Question 1:</strong> When designing a VPC, what is the purpose of an Internet Gateway?
-  <ul class="options-list">
-    <li class=correct-answer>
-        <input type="checkbox" name="0" id="opt-0-0" />
-        <label for="opt-0-0">Enables Internet communications for instances in public subnets</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-0-1" />
-        <label for="opt-0-1">It's a bastion host for inbound management connections</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-0-2" />
-        <label for="opt-0-2">Provides Internet access for EC2 instances in private subnets</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-0-3" />
-        <label for="opt-0-3">It's used for making VPN connections to a VPC</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="1"  hidden onchange="onChange(this, [2])">
-  <strong>Question 2:</strong> How does the AWS global infrastructure offer high availability and fault tolerance to customers?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-1-0" />
-        <label for="opt-1-0">The AWS infrastructure consists of subnets containing various Availability Zones with multiple data centers located in the same geographic location.</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-1-1" />
-        <label for="opt-1-1">AWS allows users to choose AWS Regions and data centers so that users can select the closest data centers in different Regions.</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="2" id="opt-1-2" />
-        <label for="opt-1-2">The AWS infrastructure consists of isolated AWS Regions with independent Availability Zones that are connected with low-latency networking and redundant power supplies.</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-1-3" />
-        <label for="opt-1-3">The AWS infrastructure is made up of multiple AWS Regions within various Availability Zones located in areas that have low flood risk and are interconnected with low-latency networks and redundant power supplies.</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="2"  hidden onchange="onChange(this, [2])">
-  <strong>Question 3:</strong> A company would like to create a private, high bandwidth network connection between its on-premises data centers and AWS Cloud. As a Cloud Practitioner, which of the following options would you recommend?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-2-0" />
-        <label for="opt-2-0">VPC peering connection</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-2-1" />
-        <label for="opt-2-1">VPC Endpoints</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="2" id="opt-2-2" />
-        <label for="opt-2-2">AWS Direct Connect</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-2-3" />
-        <label for="opt-2-3">AWS Site-to-Site VPN</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="3"  hidden onchange="onChange(this, [1])">
-  <strong>Question 4:</strong> A cloud practitioner needs to migrate a 70 TB of data from an on-premises data center into the AWS Cloud. The company has a slow and unreliable internet connection. Which AWS service can the cloud practitioner leverage to transfer the data?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-3-0" />
-        <label for="opt-3-0">AWS Storage Gateway</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="1" id="opt-3-1" />
-        <label for="opt-3-1">AWS Snowball</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-3-2" />
-        <label for="opt-3-2">Amazon S3 Glacier</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-3-3" />
-        <label for="opt-3-3">AWS DataSync</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="4"  hidden onchange="onChange(this, [2])">
-  <strong>Question 5:</strong> A multi-national company has its business-critical data stored on a fleet of Amazon Elastic Compute Cloud (Amazon EC2) instances, in various countries, configured in region-specific compliance rules. To demonstrate compliance, the company needs to submit historical configurations on a regular basis. Which AWS service is best suited for this requirement?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-4-0" />
-        <label for="opt-4-0">AWS CloudTrail</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-4-1" />
-        <label for="opt-4-1">Amazon Macie</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="2" id="opt-4-2" />
-        <label for="opt-4-2">AWS Config</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-4-3" />
-        <label for="opt-4-3">Amazon GuardDuty</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="5"  hidden onchange="onChange(this, [3])">
-  <strong>Question 6:</strong> Which AWS service can be used to load data from Amazon S3, transform it, and move it to another destination?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-5-0" />
-        <label for="opt-5-0">Amazon RedShift</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-5-1" />
-        <label for="opt-5-1">Amazon EMR</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-5-2" />
-        <label for="opt-5-2">Amazon Kinesis</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="3" id="opt-5-3" />
-        <label for="opt-5-3">AWS Glue</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="6"  hidden onchange="onChange(this, [1,2])">
-  <strong>Question 7:</strong> Which of the following solutions can you use to connect your on-premises network with AWS Cloud (Select two)?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-6-0" />
-        <label for="opt-6-0">Amazon Route 53</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="1" id="opt-6-1" />
-        <label for="opt-6-1">AWS Virtual Private Network (VPN)</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="2" id="opt-6-2" />
-        <label for="opt-6-2">AWS Direct Connect</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-6-3" />
-        <label for="opt-6-3">Internet Gateway</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="4" id="opt-6-4" />
-        <label for="opt-6-4">Amazon Virtual Private Cloud (Amazon VPC)</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="7"  hidden onchange="onChange(this, [1])">
-  <strong>Question 8:</strong> A gaming company is looking at a technology/service that can deliver a consistent low-latency gameplay to ensure a great user experience for end-users in various locations. Which AWS technology/service will provide the necessary low-latency access to the end-users?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-7-0" />
-        <label for="opt-7-0">AWS Edge Locations</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="1" id="opt-7-1" />
-        <label for="opt-7-1">AWS Local Zones</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-7-2" />
-        <label for="opt-7-2">AWS Direct Connect</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-7-3" />
-        <label for="opt-7-3">AWS Wavelength</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="8"  hidden onchange="onChange(this, [2])">
-  <strong>Question 9:</strong> A customer has created a VPC and a subnet within AWS Cloud. Which of the following statements is correct?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-8-0" />
-        <label for="opt-8-0">Both the Amazon Virtual Private Cloud (Amazon VPC) and the subnet span all of the Availability Zones (AZ) in the Region</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-8-1" />
-        <label for="opt-8-1">Both the Amazon Virtual Private Cloud (Amazon VPC) and the subnet span only one Availability Zone (AZ) in the Region</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="2" id="opt-8-2" />
-        <label for="opt-8-2">An Amazon Virtual Private Cloud (Amazon VPC) spans all of the Availability Zones (AZ) in the Region whereas a subnet spans only one Availability Zone (AZ) in the Region</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-8-3" />
-        <label for="opt-8-3">A subnet spans all of the Availability Zones (AZ) in the Region whereas an Amazon Virtual Private Cloud (Amazon VPC) spans only one Availability Zone (AZ) in the Region</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="9"  hidden onchange="onChange(this, [0])">
-  <strong>Question 10:</strong> Which of the following will help you control the incoming traffic to an Amazon EC2 instance?
-  <ul class="options-list">
-    <li class=correct-answer>
-        <input type="checkbox" name="0" id="opt-9-0" />
-        <label for="opt-9-0">Security Group</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-9-1" />
-        <label for="opt-9-1">Route Table</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-9-2" />
-        <label for="opt-9-2">AWS Resource Group</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-9-3" />
-        <label for="opt-9-3">Network access control list (network ACL)</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="10"  hidden onchange="onChange(this, [2])">
-  <strong>Question 11:</strong> A multi-national corporation wants to get expert professional advice on migrating to AWS and managing their applications on AWS Cloud. Which of the following entities would you recommend for this engagement?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-10-0" />
-        <label for="opt-10-0">AWS Trusted Advisor</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-10-1" />
-        <label for="opt-10-1">Concierge Support Team</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="2" id="opt-10-2" />
-        <label for="opt-10-2">APN Consulting Partner</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-10-3" />
-        <label for="opt-10-3">APN Technology Partner</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="11"  hidden onchange="onChange(this, [2])">
-  <strong>Question 12:</strong> Which of the following acts as a virtual firewall at the Amazon EC2 instance level to control traffic for one or more instances?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-11-0" />
-        <label for="opt-11-0">Network Access Control Lists (ACL)</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-11-1" />
-        <label for="opt-11-1">Route table</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="2" id="opt-11-2" />
-        <label for="opt-11-2">Security groups</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-11-3" />
-        <label for="opt-11-3">Virtual private gateways (VPG)</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="12"  hidden onchange="onChange(this, [0,2])">
-  <strong>Question 13:</strong> Under the AWS shared responsibility model, which actions are the responsibility of AWS? (Select TWO.)
-  <ul class="options-list">
-    <li class=correct-answer>
-        <input type="checkbox" name="0" id="opt-12-0" />
-        <label for="opt-12-0">Scanning AWS service endpoints for vulnerabilities.</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-12-1" />
-        <label for="opt-12-1">Configuring security group rules.</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="2" id="opt-12-2" />
-        <label for="opt-12-2">Encrypting traffic on the AWS backbone between global and regional AWS facilities.</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-12-3" />
-        <label for="opt-12-3">Enforcing application access restrictions.</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="4" id="opt-12-4" />
-        <label for="opt-12-4">Enabling encryption on an Amazon S3 bucket.</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="13"  hidden onchange="onChange(this, [3])">
-  <strong>Question 14:</strong> A company needs to use a secure online data transfer tool/service that can automate the ongoing transfers from on-premises systems into AWS while providing support for incremental data backups. Which AWS tool/service is an optimal fit for this requirement?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-13-0" />
-        <label for="opt-13-0">AWS Snowmobile</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-13-1" />
-        <label for="opt-13-1">AWS Storage Gateway</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-13-2" />
-        <label for="opt-13-2">AWS Snowcone</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="3" id="opt-13-3" />
-        <label for="opt-13-3">AWS DataSync</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="14"  hidden onchange="onChange(this, [1])">
-  <strong>Question 15:</strong> Which AWS service does AWS Snowball Edge natively support?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-14-0" />
-        <label for="opt-14-0">AWS Database Migration Service (AWS DMS)</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="1" id="opt-14-1" />
-        <label for="opt-14-1">Amazon EC2</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-14-2" />
-        <label for="opt-14-2">AWS Trusted Advisor</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-14-3" />
-        <label for="opt-14-3">AWS Server Migration Service (AWS SMS)</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="15"  hidden onchange="onChange(this, [2])">
-  <strong>Question 16:</strong> Which of the following AWS services can be used to connect a company's on-premises environment to a VPC without using the public internet?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-15-0" />
-        <label for="opt-15-0">VPC Endpoint</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-15-1" />
-        <label for="opt-15-1">Internet Gateway</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="2" id="opt-15-2" />
-        <label for="opt-15-2">AWS Direct Connect</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-15-3" />
-        <label for="opt-15-3">AWS Site-to-Site VPN</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="16"  hidden onchange="onChange(this, [1])">
-  <strong>Question 17:</strong> An e-commerce company has its on-premises data storage on an NFS file system that is accessed in parallel by multiple applications. The company is looking at moving the applications and data stores to AWS Cloud. Which storage service should the company use to move their files to AWS Cloud seamlessly if the application is hosted on Amazon Elastic Compute Cloud (Amazon EC2) instances?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-16-0" />
-        <label for="opt-16-0">AWS Storage Gateway</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="1" id="opt-16-1" />
-        <label for="opt-16-1">Amazon Elastic File System (Amazon EFS)</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-16-2" />
-        <label for="opt-16-2">Amazon Simple Storage Service (Amazon S3)</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-16-3" />
-        <label for="opt-16-3">Amazon Elastic Block Store (Amazon EBS)</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="17"  hidden onchange="onChange(this, [1])">
-  <strong>Question 18:</strong> How can a company facilitate the sharing of data over private connections between two accounts they own within a region?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-17-0" />
-        <label for="opt-17-0">Create an internal ELB</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="1" id="opt-17-1" />
-        <label for="opt-17-1">Create a VPC peering connection</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-17-2" />
-        <label for="opt-17-2">Configure matching CIDR address ranges</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-17-3" />
-        <label for="opt-17-3">Create a subnet peering connection</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="18"  hidden onchange="onChange(this, [0])">
-  <strong>Question 19:</strong> A company has 50 different business units and requires that each business unit's billing information is viewed separately. What should a cloud practitioner recommend?
-  <ul class="options-list">
-    <li class=correct-answer>
-        <input type="checkbox" name="0" id="opt-18-0" />
-        <label for="opt-18-0">Tag each business unit's resources, then filter by unit in Cost Explorer.</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-18-1" />
-        <label for="opt-18-1">Use a different VPC for each business unit, then filter by unit using an AWS Cost and Usage Report.</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-18-2" />
-        <label for="opt-18-2">Use separate AWS accounts for each business unit, then filter by unit using the coverage report.</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-18-3" />
-        <label for="opt-18-3">Place each business unit in a different AWS Region, then filter by unit in Cost Explorer.</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="19"  hidden onchange="onChange(this, [0,2])">
-  <strong>Question 20:</strong> Which of the following statements are correct regarding Amazon API Gateway? (Select two)
-  <ul class="options-list">
-    <li class=correct-answer>
-        <input type="checkbox" name="0" id="opt-19-0" />
-        <label for="opt-19-0">Amazon API Gateway can call an AWS Lambda function to create the front door of a serverless application</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-19-1" />
-        <label for="opt-19-1">Amazon API Gateway creates RESTful APIs, Storage Gateway creates WebSocket APIs</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="2" id="opt-19-2" />
-        <label for="opt-19-2">API Gateway can be configured to send data directly to Amazon Kinesis Data Stream</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-19-3" />
-        <label for="opt-19-3">If an API response is served by the cached data, it is not considered an API call for billing purposes</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="4" id="opt-19-4" />
-        <label for="opt-19-4">Amazon API Gateway does not yet support API result caching</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="20"  hidden onchange="onChange(this, [1])">
-  <strong>Question 21:</strong> A company is using the AWS CLI and programmatic access of AWS resources from its on-premises network. What is a mandatory requirement in this scenario?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-20-0" />
-        <label for="opt-20-0">Using Amazon API Gateway</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="1" id="opt-20-1" />
-        <label for="opt-20-1">Using an AWS access key and a secret key</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-20-2" />
-        <label for="opt-20-2">Using an Amazon EC2 key pair</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-20-3" />
-        <label for="opt-20-3">Using an AWS Direct Connect connection</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="21"  hidden onchange="onChange(this, [2])">
-  <strong>Question 22:</strong> An Amazon Virtual Private Cloud (VPC) can include multiple:
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-21-0" />
-        <label for="opt-21-0">Internet gateways.</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-21-1" />
-        <label for="opt-21-1">Edge locations.</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="2" id="opt-21-2" />
-        <label for="opt-21-2">Availability Zones.</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-21-3" />
-        <label for="opt-21-3">AWS Regions.</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="22"  hidden onchange="onChange(this, [3])">
-  <strong>Question 23:</strong> A healthcare company wants to implement a continuous replication based disaster recovery mechanism and provide fast, reliable recovery of physical, virtual, and cloud-based servers into AWS Cloud. Which of the following represents the best-fit solution for this use case?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-22-0" />
-        <label for="opt-22-0">AWS Storage Gateway</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-22-1" />
-        <label for="opt-22-1">CloudCover Disaster Recovery</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-22-2" />
-        <label for="opt-22-2">AWS Snowball Edge</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="3" id="opt-22-3" />
-        <label for="opt-22-3">CloudEndure Disaster Recovery</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="23"  hidden onchange="onChange(this, [0])">
-  <strong>Question 24:</strong> A production company would like to establish an AWS managed virtual private network (VPN) service between its on-premises network and AWS. Which item needs to be set up on the company's side?
-  <ul class="options-list">
-    <li class=correct-answer>
-        <input type="checkbox" name="0" id="opt-23-0" />
-        <label for="opt-23-0">A customer gateway</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-23-1" />
-        <label for="opt-23-1">A virtual private gateway (VGW)</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-23-2" />
-        <label for="opt-23-2">A VPC endpoint interface</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-23-3" />
-        <label for="opt-23-3">A security group</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="24"  hidden onchange="onChange(this, [2])">
-  <strong>Question 25:</strong> According to the AWS shared responsibility model, which task is the customer's responsibility?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-24-0" />
-        <label for="opt-24-0">Maintaining Amazon API Gateway infrastructure.</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-24-1" />
-        <label for="opt-24-1">Updating the operating system of AWS Lambda instances.</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="2" id="opt-24-2" />
-        <label for="opt-24-2">Updating the guest operating system on Amazon EC2 instances.</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-24-3" />
-        <label for="opt-24-3">Maintaining the infrastructure needed to run Amazon DynamoDB.</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="25"  hidden onchange="onChange(this, [1,4])">
-  <strong>Question 26:</strong> Which AWS services are associated with Edge Locations? (Select TWO.)
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-25-0" />
-        <label for="opt-25-0">Amazon EBS</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="1" id="opt-25-1" />
-        <label for="opt-25-1">AWS Shield</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-25-2" />
-        <label for="opt-25-2">AWS Config</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-25-3" />
-        <label for="opt-25-3">AWS Direct Connect</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="4" id="opt-25-4" />
-        <label for="opt-25-4">Amazon CloudFront</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="26"  hidden onchange="onChange(this, [1])">
-  <strong>Question 27:</strong> Which AWS hybrid storage service enables a user's on-premises applications to seamlessly use AWS Cloud storage?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-26-0" />
-        <label for="opt-26-0">AWS Direct Connect</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="1" id="opt-26-1" />
-        <label for="opt-26-1">AWS Storage Gateway</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-26-2" />
-        <label for="opt-26-2">AWS Backup</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="3" id="opt-26-3" />
-        <label for="opt-26-3">Amazon Connect</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="27"  hidden onchange="onChange(this, [3,4])">
-  <strong>Question 28:</strong> A company has a global user base and needs to deploy AWS services that can decrease network latency for their users. Which services may assist? (Select TWO.)
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-27-0" />
-        <label for="opt-27-0">Application Auto Scaling</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-27-1" />
-        <label for="opt-27-1">Amazon VPC</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-27-2" />
-        <label for="opt-27-2">AWS Direct Connect</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="3" id="opt-27-3" />
-        <label for="opt-27-3">AWS Global Accelerator</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="4" id="opt-27-4" />
-        <label for="opt-27-4">Amazon CloudFront</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="28"  hidden onchange="onChange(this, [3])">
-  <strong>Question 29:</strong> In which ways does AWS' pricing model benefit organizations?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-28-0" />
-        <label for="opt-28-0">Focus spend on capital expenditure, rather than operational expenditure</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-28-1" />
-        <label for="opt-28-1">Eliminates licensing costs</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-28-2" />
-        <label for="opt-28-2">Reduces the people cost of application development</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="3" id="opt-28-3" />
-        <label for="opt-28-3">Reduce the cost of maintaining idle resources</label>
-      </li>
-  </ul>
-</form>
-<form data-formidx="29"  hidden onchange="onChange(this, [3])">
-  <strong>Question 30:</strong> How can a company connect from their on-premises network to VPCs in multiple regions using private connections?
-  <ul class="options-list">
-    <li class=>
-        <input type="checkbox" name="0" id="opt-29-0" />
-        <label for="opt-29-0">Inter-Region VPC Peering</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="1" id="opt-29-1" />
-        <label for="opt-29-1">AWS Managed VPN</label>
-      </li>
-      <li class=>
-        <input type="checkbox" name="2" id="opt-29-2" />
-        <label for="opt-29-2">Amazon CloudFront</label>
-      </li>
-      <li class=correct-answer>
-        <input type="checkbox" name="3" id="opt-29-3" />
-        <label for="opt-29-3">AWS Direct Connect Gateway</label>
-      </li>
-  </ul>
-</form>
-<script>
-  window.onload = function() {
-    shuffleForm();
-  };
+          onFinish() {
+            this.answers = Array.from({ length: this.questions.length }, () => [null]);
 
-  let correct = 0;
-  let incorrectAnswers = [];
+            this.questions.forEach((question, idx) => {
+              const isCorrectAnswer = [...question.solutions].every((el) => [...this.answers][idx].includes(String(el)));
+              if (!isCorrectAnswer) this.incorrects.push(idx + 1);
+            });
+          },
+        }))
+      );
+    </script>
 
-  function onChange(formNode, solution) {
-    const formData = new FormData(formNode);
-    const formValue = [...formData.keys()].map((key) => key);
-    isCorrectAnswer = solution.every(el => formValue.includes(String(el)));
-    
-    if (formValue.length == solution.length) {
-      document.querySelector('progress').value += 1;
-      formNode.hidden = true;
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        color: darkslategrey;
 
-      // correct answer
-      if (isCorrectAnswer) correct++;
-      else incorrectAnswers.push([...document.forms].indexOf(formNode) + 1)
-      
-      const nextForm = formNode?.nextElementSibling;
-      
-      // next question
-      if (+formNode.dataset.formidx < 29) nextForm.hidden = false;
-      // end of quizz
-      else onFinish();
-    }
-  }
+        --base-color: green;
+      }
 
-  function onFinish() {
-    document.body.classList.add('show-correct')
-    document.querySelectorAll('input[type="checkbox"]')?.forEach(el => el.disabled = true)
+      button {
+        background-color: var(--base-color);
+        color: white;
+        padding: 0.5rem;
+        border: none;
+        border-radius: 0.2rem;
+        font-size: 1rem;
+      }
 
-    document.querySelector('#correct-count')?.insertAdjacentText('afterend', ' ' + correct);
-    document.querySelector('#incorrect-answers')?.insertAdjacentText('afterend', ' ' + incorrectAnswers); 
+      progress {
+        width: 100%;
+        height: 0.5rem;
+        border-radius: 0.2rem;
+      }
 
-    const rate = Math.floor(correct / 30 * 100);
-    document.querySelector('#rate')?.insertAdjacentText('afterend', ' ' + rate + '% ' + (rate >= 70 ? '(PASS)' : '(FAIL)'));
-    document.querySelectorAll('[hidden]').forEach(n => n.hidden = false);
-  }
-  
-  function shuffleForm() {
-    document.querySelectorAll('.options-list').forEach(optsList => {
-      const optionNodes = [...optsList.children];
-      optionNodes.sort(() => Math.random() - 0.5);
-      optionNodes.forEach(optNode => optsList.appendChild(optNode));
-    })
-  }
-</script>
+      /* Styling the progress bar colors */
+      progress::-webkit-progress-value {
+        background-color: var(--base-color);
+      }
+
+      progress::-moz-progress-bar {
+        background-color: var(--base-color);
+      }
+
+      progress::-webkit-progress-bar {
+        background-color: mediumspringgreen;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0.5rem;
+        margin: 0.5rem 0;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 0.5rem mediumspringgreen;
+        border-left: 0.2rem solid var(--base-color);
+      }
+
+      form.show-correct li.correct-answer {
+        background-color: mediumspringgreen;
+        box-shadow: -0.2rem 0 0 0 green;
+      }
+
+      input[type='checkbox'] {
+        margin-right: 0.5rem;
+      }
+
+      strong {
+        color: var(--base-color);
+        display: block;
+      }
+
+      li {
+        line-height: 1rem;
+        margin: 2px 0;
+        padding: 2px 0;
+      }
+
+      li:first-of-type {
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <form
+      x-data="model"
+      :class="{ 'show-correct': finished }"
+      x-init="$nextTick(() => $dispatch('rendered'))"
+      @rendered="shuffleNodes($el, 'UL')"
+    >
+      <button @click="onFinish(); $el.remove()">SKIP QUIZZ</button>
+
+      <progress value="0" :value="answers.length" :max="questions.length"></progress>
+
+      <div x-show="finished">
+        <b>Correct count:</b>
+        <span x-text="correct"></span>
+        <br />
+        <b>Incorrect answers:</b>
+        <span x-text="incorrects"></span>
+        <br />
+        <b>Rate:</b>
+        <span x-text="`${rate}% (${rate >= 70 ? 'PASS' : 'FAIL'})`"></span>
+        <hr />
+      </div>
+
+      <template x-for="(item, index) in questions">
+        <ul
+          x-data="{ selectedOpts: [] }"
+          x-show="index == answers.length || finished"
+          x-transition
+          x-init="$nextTick(() => $dispatch('rendered'))"
+          @rendered="shuffleNodes($el, 'LI')"
+          @change="onSetValue(item.solutions, selectedOpts)"
+        >
+          <strong x-text="`Question ${index + 1}:`"></strong>
+
+          <span x-text="item.question"></span>
+
+          <template x-for="(opt, optId) in item.options" :key="optId">
+            <li :class="{ 'correct-answer': item.solutions.includes(optId) }">
+              <input type="checkbox" :id="`opt-${index}-${optId}`" :value="optId" :disabled="finished" x-model="selectedOpts" />
+              <label x-text="opt" :for="`opt-${index}-${optId}`"></label>
+            </li>
+          </template>
+        </ul>
+      </template>
+    </form>
+  </body>
+</html>
+<script> questions=[{"index":120,"question":"A social media company wants to protect its web application from common web exploits such as SQL injection and cross-site scripting. Which of the following AWS services can be used to address this use-case?","options":["Amazon GuardDuty","Amazon Inspector","AWS Web Application Firewall (AWS WAF)","AWS CloudWatch"],"solutions":[2]},{"index":328,"question":"Which of the following AWS services is delivered globally rather than regionally?","options":["AWS Snowmobile","Amazon Simple Storage Service (Amazon S3) buckets","Amazon WorkSpaces","Amazon Elastic File System (Amazon EFS)"],"solutions":[2]},{"index":87,"question":"Which AWS service will help you receive alerts when the reservation utilization falls below the defined threshold?","options":["AWS CloudTrail","AWS Trusted Advisor","AWS Pricing Calculator","AWS Budgets"],"solutions":[3]},{"index":240,"question":"Which of the following entities are part of an Amazon Virtual Private Cloud (Amazon VPC) in the AWS Cloud? (Select two)","options":["API Gateway","Object","Subnet","AWS Storage Gateway","Internet Gateway"],"solutions":[2,4]},{"index":97,"question":"Which AWS services can be used to facilitate organizational change management, part of the Reliability pillar of AWS Well-Architected Framework? (Select three)","options":["Amazon Inspector","Amazon GuardDuty","Amazon CloudWatch","AWS Trusted Advisor","AWS CloudTrail","AWS Config"],"solutions":[2,4,5]},{"index":500,"question":"A Cloud Practitioner is re-architecting a monolithic application. Which design principles for cloud architecture do AWS recommend? (Select TWO.)","options":["Implement loose coupling.","Rely on individual components.","Use self-managed servers.","Design for scalability.","Implement manual scalability."],"solutions":[0,3]},{"index":336,"question":"A financial services company needs to retain its data for 10 years to meet compliance norms. Which Amazon Simple Storage Service (Amazon S3) storage class is the best fit for this use case considering that the data has to be stored at a minimal cost?","options":["Amazon S3 Intelligent-Tiering","Amazon S3 Standard-Infrequent Access (S3 Standard-IA)","Amazon S3 Glacier Deep Archive","Amazon S3 Glacier Flexible Retrieval"],"solutions":[2]},{"index":62,"question":"A start-up would like to quickly deploy a popular technology on AWS. As a Cloud Practitioner, which AWS tool would you use for this task?","options":["AWS Partner Solutions (formerly Quick Starts)","AWS Whitepapers","AWS CodeDeploy","AWS Forums"],"solutions":[0]},{"index":66,"question":"Which of the following entities applies patches to the underlying OS for Amazon Aurora?","options":["The AWS customer by using AWS Systems Manager","The AWS Product Team automatically","The AWS Support after receiving a request from the customer","The AWS customer by SSHing on the instances"],"solutions":[1]},{"index":76,"question":"Which of the following is an INCORRECT statement about Scaling, a design principle of Reliability pillar of the AWS Well-Architected Framework?","options":["A scale up operation implies you scale by adding more power (CPU, RAM) to your existing machine/node","A scale out operation implies you scale by adding more instances to your existing pool of resources","Fault tolerance is achieved by a scale out operation","Fault tolerance is achieved by a scale up operation"],"solutions":[3]},{"index":140,"question":"Which AWS service should be used when you want to run container applications, but want to avoid the operational overhead of scaling, patching, securing, and managing servers?","options":["Amazon Elastic Container Service (Amazon ECS) - Fargate launch type","Amazon Elastic Container Service (Amazon ECS) - EC2 launch type","AWS Lambda","Amazon Elastic Compute Cloud (Amazon EC2)"],"solutions":[0]},{"index":2,"question":"A Cloud Practitioner would like to get operational insights of its resources to quickly identify any issues that might impact applications using those resources. Which AWS service can help with this task?","options":["AWS Health Dashboard - Your Account Health","AWS Systems Manager","Amazon Inspector","AWS Trusted Advisor"],"solutions":[1]},{"index":132,"question":"A company wants a fully managed, flexible, and scalable file storage system, with low latency access, for its Windows-based applications. Which AWS service is the right choice for the company?","options":["Amazon FSx for Lustre","Amazon Elastic File System (Amazon EFS)","Amazon FSx for Windows File Server","Amazon Elastic Block Storage (Amazon EBS)"],"solutions":[2]},{"index":295,"question":"Which AWS service can be used to view the most comprehensive billing details for the past month?","options":["AWS Budgets","AWS Cost & Usage Report (AWS CUR)","AWS Cost Explorer","AWS Pricing Calculator"],"solutions":[1]},{"index":119,"question":"Which of the following AWS services can be used to prevent Distributed Denial-of-Service (DDoS) attack? (Select three)","options":["Amazon Inspector","AWS CloudHSM","AWS Web Application Firewall (AWS WAF)","Amazon CloudFront with Amazon Route 53","AWS Shield","AWS Trusted Advisor"],"solutions":[2,3,4]}] </script>

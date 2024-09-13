@@ -34,3 +34,17 @@ function removeDuplicateQuestions(arr) {
 
   return resultArray;
 }
+
+/*    function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+  }
+
+  function shuffleQuestionsAndOptions(data) {
+    return shuffle(data).map((q) => ({ ...q, options: shuffle(q.options) }));
+  } */
+
+// const optionNodes = [...optsList.children];
+// optionNodes.sort(() => Math.random() - 0.5);
+// optionNodes.forEach((optNode) => optsList.appendChild(optNode));
+
+// document.querySelector('ul').childNodes;

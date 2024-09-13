@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Quizz CLF-C02</title>
-
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
-      document.addEventListener('alpine:init', function () {
-        Alpine.data('model', (el) => ({
+      document.addEventListener('alpine:init', () =>
+        Alpine.data('model', () => ({
           questions,
           answers: [],
           incorrects: [],
@@ -26,6 +25,18 @@
             return Math.floor((this.correct / this.questions.length) * 100);
           },
 
+          shuffleNodes(parentElement, tagName) {
+            const childrenArray = [...parentElement.children].filter((el) => el.tagName == tagName);
+            childrenArray.sort(() => Math.random() - 0.5);
+            childrenArray.forEach((child) => parentElement.appendChild(child));
+          },
+
+          onSetValue([...solutionOpts], [...selectedOpts]) {
+            if (solutionOpts.length != selectedOpts.length) return;
+            this.answers.push(selectedOpts);
+            if (this.answers.length == this.questions.length) this.onFinish();
+          },
+
           onFinish() {
             this.answers = Array.from({ length: this.questions.length }, () => [null]);
 
@@ -34,35 +45,25 @@
               if (!isCorrectAnswer) this.incorrects.push(idx + 1);
             });
           },
-
-          onSetValue([...solutionOpts], [...selectedOpts]) {
-            if (solutionOpts.length != selectedOpts.length) return;
-
-            this.answers.push(selectedOpts);
-
-            if (this.answers.length == this.questions.length) this.onFinish();
-          },
-        }));
-      });
+        }))
+      );
     </script>
 
     <style>
       body {
         font-family: 'Arial', sans-serif;
-        background-color: #f9f9fb;
         color: darkslategrey;
 
-        --base-blue: #007bff;
+        --base-color: green;
       }
 
       button {
-        background-color: var(--base-blue);
+        background-color: var(--base-color);
         color: white;
         padding: 0.5rem;
         border: none;
         border-radius: 0.2rem;
         font-size: 1rem;
-        margin-bottom: 0.5rem;
       }
 
       progress {
@@ -73,15 +74,15 @@
 
       /* Styling the progress bar colors */
       progress::-webkit-progress-value {
-        background-color: var(--base-blue);
+        background-color: var(--base-color);
       }
 
       progress::-moz-progress-bar {
-        background-color: var(--base-blue);
+        background-color: var(--base-color);
       }
 
       progress::-webkit-progress-bar {
-        background-color: #71c384;
+        background-color: mediumspringgreen;
       }
 
       ul {
@@ -89,12 +90,12 @@
         padding: 0.5rem;
         margin: 0.5rem 0;
         border-radius: 0.5rem;
-        box-shadow: 0 2px 0.5rem rgba(0, 0, 0, 0.5);
-        border-left: 0.2rem solid var(--base-blue);
+        box-shadow: 0 2px 0.5rem mediumspringgreen;
+        border-left: 0.2rem solid var(--base-color);
       }
 
       form.show-correct li.correct-answer {
-        background-color: lightgreen;
+        background-color: mediumspringgreen;
         box-shadow: -0.2rem 0 0 0 green;
       }
 
@@ -103,12 +104,14 @@
       }
 
       strong {
-        color: var(--base-blue);
+        color: var(--base-color);
         display: block;
       }
 
       li {
-        line-height: 2rem;
+        line-height: 1rem;
+        margin: 2px 0;
+        padding: 2px 0;
       }
 
       li:first-of-type {
@@ -139,6 +142,8 @@
           x-data="{ selectedOpts: [] }"
           x-show="index == answers.length || finished"
           x-transition
+          x-init="$nextTick(() => $dispatch('rendered'))"
+          @rendered="shuffleNodes($el, 'LI')"
           @change="onSetValue(item.solutions, selectedOpts)"
         >
           <strong x-text="`Question ${index + 1}:`"></strong>
@@ -147,7 +152,7 @@
 
           <template x-for="(opt, optId) in item.options" :key="optId">
             <li :class="{ 'correct-answer': item.solutions.includes(optId) }">
-              <input type="checkbox" :id="`opt-${index}-${optId}`" :value="optId" x-model="selectedOpts" :disabled="finished" />
+              <input type="checkbox" :id="`opt-${index}-${optId}`" :value="optId" :disabled="finished" x-model="selectedOpts" />
               <label x-text="opt" :for="`opt-${index}-${optId}`"></label>
             </li>
           </template>
