@@ -4,21 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
     <title>Quizz CLF-C02</title>
+
+    <!-- Alpine Plugins -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Alpine Core -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <script>
-      document.addEventListener('alpine:init', () =>
+      document.addEventListener('alpine:init', function () {
         Alpine.data('model', () => ({
           questions,
-          answers: [],
           incorrects: [],
+          selectedOpts: Alpine.$persist([]),
 
           get correct() {
             return this.questions.length - this.incorrects.length;
           },
 
           get finished() {
-            return this.answers.length >= this.questions.length;
+            return this.selectedOpts.length >= this.questions.length;
           },
 
           get rate() {
@@ -31,22 +38,22 @@
             childrenArray.forEach((child) => parentElement.appendChild(child));
           },
 
-          onSetValue([...solutionOpts], [...selectedOpts]) {
-            if (solutionOpts.length != selectedOpts.length) return;
-            this.answers.push(selectedOpts);
-            if (this.answers.length == this.questions.length) this.onFinish();
+          onSetValue(idx, selectedOpts) {
+            if (selectedOpts.length == this.questions[idx].solutions.length) {
+              this.selectedOpts[idx] = selectedOpts;
+            }
           },
 
           onFinish() {
-            this.answers = Array.from({ length: this.questions.length }, () => [null]);
+            this.selectedOpts = this.selectedOpts.concat(Array(this.questions.length - this.selectedOpts.length).fill([]));
 
             this.questions.forEach((question, idx) => {
-              const isCorrectAnswer = [...question.solutions].every((el) => [...this.answers][idx].includes(String(el)));
+              const isCorrectAnswer = [...question.solutions].every((el) => [...this.selectedOpts][idx].includes(String(el)));
               if (!isCorrectAnswer) this.incorrects.push(idx + 1);
             });
           },
-        }))
-      );
+        }));
+      });
     </script>
 
     <style>
@@ -85,12 +92,16 @@
         background-color: mediumspringgreen;
       }
 
+      form:not(.show-correct) ul {
+        min-height: calc(100lvh - 6rem);
+      }
+
       ul {
         list-style: none;
         padding: 0.5rem;
         margin: 0.5rem 0;
         border-radius: 0.5rem;
-        box-shadow: 0 2px 0.5rem mediumspringgreen;
+        box-shadow: 0 2px 6px 3px mediumspringgreen;
         border-left: 0.2rem solid var(--base-color);
       }
 
@@ -109,7 +120,6 @@
       }
 
       li {
-        line-height: 1rem;
         margin: 2px 0;
         padding: 2px 0;
       }
@@ -119,11 +129,12 @@
       }
     </style>
   </head>
+
   <body>
     <form x-data="model" :class="{ 'show-correct': finished }">
-      <button @click="onFinish(); $el.remove()">SKIP QUIZZ</button>
+      <button type="button" x-show="!finished" @click="onFinish()">SKIP QUIZZ</button>
 
-      <progress value="0" :value="answers.length" :max="questions.length"></progress>
+      <progress value="0" :value="selectedOpts.length" :max="questions.length"></progress>
 
       <div x-show="finished">
         <b>Correct count:</b>
@@ -133,27 +144,27 @@
         <span x-text="incorrects"></span>
         <br />
         <b>Rate:</b>
-        <span x-text="`${rate}% (${rate >= 70 ? 'PASS' : 'FAIL'})`"></span>
+        <span x-text="${rate}% (${rate >= 70 ? 'PASS' : 'FAIL'})"></span>
         <hr />
       </div>
 
       <template x-for="(item, index) in questions">
         <ul
-          x-data="{ selectedOpts: [] }"
-          x-show="index == answers.length || finished"
+          x-data="{ val: [] }"
+          x-show="index == selectedOpts.length || finished"
           x-transition
           x-init="$nextTick(() => $dispatch('rendered'))"
           @rendered="shuffleNodes($el, 'LI')"
-          @change="onSetValue(item.solutions, selectedOpts)"
+          @change="onSetValue(index, val)"
         >
-          <strong x-text="`Question ${index + 1}:`"></strong>
+          <strong x-text="Question ${index + 1}:"></strong>
 
           <span x-text="item.question"></span>
 
           <template x-for="(opt, optId) in item.options" :key="optId">
             <li :class="{ 'correct-answer': item.solutions.includes(optId) }">
-              <input type="checkbox" :id="`opt-${index}-${optId}`" :value="optId" :disabled="finished" x-model="selectedOpts" />
-              <label x-text="opt" :for="`opt-${index}-${optId}`"></label>
+              <input type="checkbox" :id="opt-${index}-${optId}" :value="optId" :disabled="finished" x-model="val" />
+              <label x-text="opt" :for="opt-${index}-${optId}"></label>
             </li>
           </template>
         </ul>
