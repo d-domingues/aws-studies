@@ -13,6 +13,9 @@
     <!-- Alpine Core -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
       document.addEventListener('alpine:init', function () {
         Alpine.data('model', () => ({
@@ -55,97 +58,27 @@
         }));
       });
     </script>
-
-    <style>
-      body {
-        font-family: 'Arial', sans-serif;
-        color: darkslategrey;
-
-        --base-color: green;
-      }
-
-      button {
-        background-color: var(--base-color);
-        color: white;
-        padding: 0.5rem;
-        border: none;
-        border-radius: 0.2rem;
-        font-size: 1rem;
-      }
-
-      progress {
-        width: 100%;
-        height: 0.5rem;
-        border-radius: 0.2rem;
-      }
-
-      /* Styling the progress bar colors */
-      progress::-webkit-progress-value {
-        background-color: var(--base-color);
-      }
-
-      progress::-moz-progress-bar {
-        background-color: var(--base-color);
-      }
-
-      progress::-webkit-progress-bar {
-        background-color: mediumspringgreen;
-      }
-
-      form:not(.show-correct) ul {
-        min-height: calc(100lvh - 6rem);
-      }
-
-      ul {
-        list-style: none;
-        padding: 0.5rem;
-        margin: 0.5rem 0;
-        border-radius: 0.5rem;
-        box-shadow: 0 2px 6px 3px mediumspringgreen;
-        border-left: 0.2rem solid var(--base-color);
-      }
-
-      form.show-correct li.correct-answer {
-        background-color: mediumspringgreen;
-        box-shadow: -0.2rem 0 0 0 green;
-      }
-
-      input[type='checkbox'] {
-        margin-right: 0.5rem;
-      }
-
-      strong {
-        color: var(--base-color);
-        display: block;
-      }
-
-      li {
-        margin: 2px 0;
-        padding: 2px 0;
-      }
-
-      li:first-of-type {
-        margin-top: 1rem;
-      }
-    </style>
   </head>
 
-  <body>
-    <form x-data="model" :class="{ 'show-correct': finished }">
-      <button type="button" x-show="!finished" @click="onFinish()">SKIP QUIZZ</button>
+  <body class="font-sans text-darkslategrey">
+    <form x-data="model" class="p-2">
+      <button type="button" x-show="!finished" @click="onFinish()" class="bg-green-600 text-white py-2 px-4 rounded text-lg">
+        SKIP QUIZZ
+      </button>
 
-      <progress value="0" :value="selectedOpts.length" :max="questions.length"></progress>
+      <progress
+        value="0"
+        :value="selectedOpts.length"
+        :max="questions.length"
+        class="w-full h-2 bg-green-200 [&::-webkit-progress-value]:bg-green-600 [&::-moz-progress-bar]:bg-green-600 [&::-webkit-progress-bar]:bg-green-200"
+      ></progress>
 
-      <div x-show="finished">
-        <b>Correct count:</b>
-        <span x-text="correct"></span>
-        <br />
-        <b>Incorrect answers:</b>
-        <span x-text="incorrects"></span>
-        <br />
+      <div x-show="finished" class="my-4">
+        <b>Correct count:</b> <span x-text="correct"></span><br />
+        <b>Incorrect answers:</b> <span x-text="incorrects"></span><br />
         <b>Rate:</b>
-        <span x-text="${rate}% (${rate >= 70 ? 'PASS' : 'FAIL'})"></span>
-        <hr />
+        <span x-text="`${rate}% (${rate >= 70 ? 'PASS' : 'FAIL'})`"></span>
+        <hr class="my-2" />
       </div>
 
       <template x-for="(item, index) in questions">
@@ -156,15 +89,23 @@
           x-init="$nextTick(() => $dispatch('rendered'))"
           @rendered="shuffleNodes($el, 'LI')"
           @change="onSetValue(index, val)"
+          class="list-none p-2 my-2 rounded-lg ring-2 ring-green-600 ring-inset"
         >
-          <strong x-text="Question ${index + 1}:"></strong>
+          <strong x-text="`Question ${index + 1}:`" class="block text-green-600"></strong>
 
           <span x-text="item.question"></span>
 
           <template x-for="(opt, optId) in item.options" :key="optId">
-            <li :class="{ 'correct-answer': item.solutions.includes(optId) }">
-              <input type="checkbox" :id="opt-${index}-${optId}" :value="optId" :disabled="finished" x-model="val" />
-              <label x-text="opt" :for="opt-${index}-${optId}"></label>
+            <li :class="{ 'bg-green-200 ring-1 ring-green-600': item.solutions.includes(optId) && finished }" class="my-1 p-1">
+              <input
+                type="checkbox"
+                :id="`opt-${index}-${optId}`"
+                :value="optId"
+                :disabled="finished"
+                x-model="val"
+                class="mr-2"
+              />
+              <label x-text="opt" :for="`opt-${index}-${optId}`" class="text-sm"></label>
             </li>
           </template>
         </ul>
@@ -172,4 +113,4 @@
     </form>
   </body>
 </html>
-<script> questions=[{"index":143,"question":"Which tool will help you review your workloads against current AWS best practices for cost optimization, security, and performance improvement and then obtain advice to architect them better?","options":["Amazon CloudWatch","AWS Cost Explorer","Amazon Inspector","AWS Trusted Advisor"],"solutions":[3]},{"index":95,"question":"Which of the following AWS Support plans provide access to guidance, configuration, and troubleshooting of AWS interoperability with third-party software? (Select two)","options":["AWS Basic Support","AWS Developer Support","AWS Enterprise Support","AWS Business Support","AWS Corporate Support"],"solutions":[2,3]},{"index":292,"question":"According to the AWS Shared Responsibility Model, which of the following is the responsibility of the customer?","options":["Edge locations security","Firewall & networking configuration of Amazon Elastic Compute Cloud (Amazon EC2)","Protecting hardware infrastructure","Managing Amazon DynamoDB"],"solutions":[1]},{"index":49,"question":"A financial services enterprise plans to enable Multi-Factor Authentication (MFA) for its employees. For ease of travel, they prefer not to use any physical devices to implement Multi-Factor Authentication (MFA). Which of the below options is best suited for this use case?","options":["Virtual Multi-Factor Authentication (MFA) device","Soft Token Multi-Factor Authentication (MFA) device","Hardware Multi-Factor Authentication (MFA) device","U2F security key"],"solutions":[0]},{"index":203,"question":"A development team is looking for a forum where the most frequent questions and requests from AWS customers are listed along with AWS provided solutions. Which AWS forum/service can be used for troubleshooting an issue or checking for a solution?","options":["AWS Marketplace","AWS Knowledge Center","AWS Health Dashboard - service health","AWS Support Center"],"solutions":[1]}] </script>
+<script> questions=[{"index":701,"question":"Which of the following would be good reasons to move from on-premises to the AWS Cloud? (Select TWO.)","options":["Improve agility and elasticity","Outsource all security responsibility","Gain access to free technical support services","Reduce costs through easier right-sizing of workloads","Gain end-to-end operational management of the entire infrastructure stack"],"solutions":[0,3]},{"index":15,"question":"Multi-AZ deployment is an example of which of the following?","options":["Performance Efficiency","Scale up","Scale out","High Availability"],"solutions":[3]},{"index":159,"question":"A startup is looking for 24x7 phone based technical support for its AWS account. Which of the following is the MOST cost-effective AWS support plan for this use-case?","options":["AWS Developer Support","AWS Business Support","AWS Enterprise On-Ramp Support","AWS Enterprise Support"],"solutions":[1]},{"index":167,"question":"What foundational capability under the operations perspective is part of the AWS Cloud Adoption Framework (AWS CAF)?","options":["Platform engineering","Vulnerability management","Application portfolio management","Performance and capacity management"],"solutions":[3]},{"index":713,"question":"According to the AWS Shared Responsibility Model, which of the following is a shared control?","options":["Awareness and training","Client-side data encryption","Operating system patching","Protection of infrastructure"],"solutions":[0]}] </script>
