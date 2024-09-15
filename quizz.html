@@ -19,35 +19,35 @@
       document.addEventListener('alpine:init', () => {
         Alpine.data('model', () => ({
           questions,
-          incorrects: [],
           selectedOpts: Alpine.$persist(Array.from({ length: this.questions.length }, () => [])),
           doneIndexes: Alpine.$persist([]),
 
-          init() {
-            this.$watch('incorrects', (value) => {});
-
-            Alpine.effect(() => {
-              this.incorrects = this.questions.reduce(
-                (acc, sol, i) => (!sol.solutions.every((num, idx) => num === +this.selectedOpts[i][idx]) ? [...acc, i + 1] : acc),
-                []
-              );
-            });
-          },
-
-          get correct() {
-            return this.questions.length - this.incorrects.length;
-          },
+          incorrects: [],
+          correct: 0,
+          finished: false,
+          rate: 0,
+          failedQuestionIndexes: [],
 
           get currentIndex() {
             return this.selectedOpts.findIndex((inner, idx) => inner.length < this.questions[idx].solutions.length);
           },
 
-          get finished() {
-            return this.currentIndex < 0;
-          },
+          init() {
+            this.$watch('selectedOpts', (value) => {
+              this.incorrects = this.questions.reduce((acc, next, idx) => {
+                const isCorrect = value[idx].every((e) => next.solutions.includes(+e));
+                if (isCorrect) {
+                  return acc;
+                }
+                return [...acc, idx];
+              }, []);
 
-          get rate() {
-            return Math.floor((this.correct / this.questions.length) * 100);
+              this.correct = this.questions.length - this.incorrects.length;
+              this.rate = Math.floor((this.correct / this.questions.length) * 100);
+
+              this.currentIndex = value.findIndex((inner, idx) => inner.length < this.questions[idx].solutions.length);
+              this.finished = this.currentIndex < 0;
+            });
           },
 
           shuffleNodes(parentElement, tagName) {
@@ -56,13 +56,16 @@
             childrenArray.forEach((child) => parentElement.appendChild(child));
           },
 
-          onRestartForm() {
-            // this.incorrects = [];
+          onRestartQuizz() {
             this.selectedOpts = Array.from({ length: this.questions.length }, () => []);
           },
 
-          onFinish() {
+          onSkipQuizz() {
             this.selectedOpts = this.questions.map((q) => q.solutions);
+          },
+
+          onShowResult() {
+            console.log(this.incorrects.map((idx) => this.questions[idx].index));
           },
         }));
       });
@@ -71,14 +74,14 @@
 
   <body class="font-sans text-darkslategrey">
     <form x-data="model" class="p-2">
-      <button type="button" x-show="!finished" @click="onFinish()" class="bg-green-600 text-white py-1 px-2 rounded">
+      <button type="button" x-show="!finished" @click="onSkipQuizz()" class="bg-green-600 text-white py-1 px-2 rounded">
         SKIP QUIZZ
       </button>
 
       <button
         type="button"
         x-show="currentIndex || finished"
-        @click="onRestartForm()"
+        @click="onRestartQuizz()"
         class="bg-green-600 text-white py-1 px-2 rounded"
       >
         RESTART QUIZZ
@@ -92,9 +95,9 @@
       ></progress>
 
       <template x-if="finished">
-        <div class="my-4">
+        <div class="my-4" x-init="onShowResult()">
           <b>Correct count:</b> <span x-text="correct"></span><br />
-          <b>Incorrect answers:</b> <span x-text="incorrects"></span><br />
+          <b>Incorrect answers:</b> <span x-text="`${incorrects.map(item => item + 1)}`"></span><br />
           <b>Rate:</b>
           <span x-text="`${rate}% (${rate >= 70 ? 'PASS' : 'FAIL'})`"></span>
           <hr class="my-2" />
@@ -130,4 +133,48 @@
     </form>
   </body>
 </html>
-<script> questions=[{"index":632,"question":"AWS Business Support customers have access to which of the following?","options":["AWS technical account manager (TAM)","AWS Support concierge","AWS Health API","AWS DDoS Response Team (DRT)"],"solutions":[2]},{"index":610,"question":"A user has an AWS account with a Business-level AWS Support plan and needs assistance with handling a production service disruption. Which action should the user take?","options":["Open a business-critical system down support case","Contact the dedicated Technical Account Manager","Open a production system down support case","Contact the dedicated AWS Concierge Support team"],"solutions":[2]},{"index":575,"question":"What is a specific benefit of an Enterprise Support plan?","options":["Included Technical Account Manager","Included AWS Solutions Architect","Included Technical Support Manager","Included Cloud Support Associate"],"solutions":[0]},{"index":304,"question":"According to the AWS Shared Responsibility Model, which of the following is both the responsibility of AWS and the customer? (Select two)","options":["Customer data","Data center security","Disposal of disk drives","Configuration management","Operating system (OS) configuration"],"solutions":[3,4]}] </script>
+
+<script>
+  questions = [
+    {
+      index: 441,
+      question:
+        'A company is designing a new a service that must align with the operational excellence pillar of the AWS Well-Architected Framework. Which design principles should the company follow? (Select TWO.)',
+      options: [
+        'Anticipate failure.',
+        'Perform operations as code.',
+        'Create static operational procedures.',
+        'Make large-scale changes.',
+        'Perform manual operations.',
+      ],
+      solutions: [0, 1],
+    },
+    {
+      index: 216,
+      question:
+        'AWS Trusted Advisor analyzes your AWS environment and provides best practice recommendations for which of the following categories? (Select two)',
+      options: ['Elasticity', 'Service Limits', 'Documentation', 'Change Management', 'Cost Optimization'],
+      solutions: [1, 4],
+    },
+    {
+      index: 117,
+      question:
+        'The AWS Well-Architected Framework provides guidance on building cloud based applications using AWS best practices. Which of the following options are the pillars mentioned in the AWS Well-Architected Framework? (Select two)',
+      options: ['Scalability', 'Availability', 'Elasticity', 'Reliability', 'Cost Optimization'],
+      solutions: [3, 4],
+    },
+    {
+      index: 735,
+      question:
+        'Under the shared responsibility model, which of the following tasks are the responsibility of the AWS customer? (Select TWO.)',
+      options: [
+        'Ensuring that access to data centers is restricted',
+        'Ensuring that users have received security training in the use of AWS services',
+        'Ensuring that application data is encrypted at rest',
+        'Ensuring that AWS NTP servers are set to the correct time',
+        'Ensuring that hardware is disposed of properly',
+      ],
+      solutions: [1, 2],
+    },
+  ];
+</script>

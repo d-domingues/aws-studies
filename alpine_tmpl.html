@@ -19,35 +19,35 @@
       document.addEventListener('alpine:init', () => {
         Alpine.data('model', () => ({
           questions,
-          incorrects: [],
           selectedOpts: Alpine.$persist(Array.from({ length: this.questions.length }, () => [])),
           doneIndexes: Alpine.$persist([]),
 
-          init() {
-            this.$watch('incorrects', (value) => {});
-
-            Alpine.effect(() => {
-              this.incorrects = this.questions.reduce(
-                (acc, sol, i) => (!sol.solutions.every((num, idx) => num === +this.selectedOpts[i][idx]) ? [...acc, i + 1] : acc),
-                []
-              );
-            });
-          },
-
-          get correct() {
-            return this.questions.length - this.incorrects.length;
-          },
+          incorrects: [],
+          correct: 0,
+          finished: false,
+          rate: 0,
+          failedQuestionIndexes: [],
 
           get currentIndex() {
             return this.selectedOpts.findIndex((inner, idx) => inner.length < this.questions[idx].solutions.length);
           },
 
-          get finished() {
-            return this.currentIndex < 0;
-          },
+          init() {
+            this.$watch('selectedOpts', (value) => {
+              this.incorrects = this.questions.reduce((acc, next, idx) => {
+                const isCorrect = value[idx].every((e) => next.solutions.includes(+e));
+                if (isCorrect) {
+                  return acc;
+                }
+                return [...acc, idx];
+              }, []);
 
-          get rate() {
-            return Math.floor((this.correct / this.questions.length) * 100);
+              this.correct = this.questions.length - this.incorrects.length;
+              this.rate = Math.floor((this.correct / this.questions.length) * 100);
+
+              this.currentIndex = value.findIndex((inner, idx) => inner.length < this.questions[idx].solutions.length);
+              this.finished = this.currentIndex < 0;
+            });
           },
 
           shuffleNodes(parentElement, tagName) {
@@ -56,12 +56,16 @@
             childrenArray.forEach((child) => parentElement.appendChild(child));
           },
 
-          onRestartForm() {
+          onRestartQuizz() {
             this.selectedOpts = Array.from({ length: this.questions.length }, () => []);
           },
 
-          onFinish() {
+          onSkipQuizz() {
             this.selectedOpts = this.questions.map((q) => q.solutions);
+          },
+
+          onShowResult() {
+            console.log(this.incorrects.map((idx) => this.questions[idx].index));
           },
         }));
       });
@@ -70,14 +74,14 @@
 
   <body class="font-sans text-darkslategrey">
     <form x-data="model" class="p-2">
-      <button type="button" x-show="!finished" @click="onFinish()" class="bg-green-600 text-white py-1 px-2 rounded">
+      <button type="button" x-show="!finished" @click="onSkipQuizz()" class="bg-green-600 text-white py-1 px-2 rounded">
         SKIP QUIZZ
       </button>
 
       <button
         type="button"
         x-show="currentIndex || finished"
-        @click="onRestartForm()"
+        @click="onRestartQuizz()"
         class="bg-green-600 text-white py-1 px-2 rounded"
       >
         RESTART QUIZZ
@@ -91,9 +95,9 @@
       ></progress>
 
       <template x-if="finished">
-        <div class="my-4">
+        <div class="my-4" x-init="onShowResult()">
           <b>Correct count:</b> <span x-text="correct"></span><br />
-          <b>Incorrect answers:</b> <span x-text="incorrects"></span><br />
+          <b>Incorrect answers:</b> <span x-text="`${incorrects.map(item => item + 1)}`"></span><br />
           <b>Rate:</b>
           <span x-text="`${rate}% (${rate >= 70 ? 'PASS' : 'FAIL'})`"></span>
           <hr class="my-2" />
@@ -117,6 +121,7 @@
                 type="checkbox"
                 :id="`opt-${index}-${optId}`"
                 :value="optId"
+                <
                 :disabled="finished"
                 x-model="selectedOpts[index]"
                 class="mr-2"
