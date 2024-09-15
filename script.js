@@ -39,7 +39,7 @@ function writeToAlpine({ devMode = fase, length = 65, keywords = [] }) {
   let destination = devMode ? 'quizz.html' : '../../OneDrive/quizz.html';
 
   if (!devMode) {
-    // fs.writeFileSync('done.json', JSON.stringify([...doneQuestions, ...nextDoneQuestions]));
+    fs.writeFileSync('done.json', JSON.stringify([...doneQuestions, ...nextDoneQuestions]));
   }
 
   fs.writeFileSync(destination, alpineTmpl + stringToAdd, 'utf8');

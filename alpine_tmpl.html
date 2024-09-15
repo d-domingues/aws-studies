@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-
     <title>Quizz CLF-C02</title>
 
     <!-- Alpine Plugins -->
@@ -17,11 +16,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
-      document.addEventListener('alpine:init', function () {
+      document.addEventListener('alpine:init', () => {
         Alpine.data('model', () => ({
           questions,
           incorrects: [],
           selectedOpts: Alpine.$persist([]),
+          doneIndexes: Alpine.$persist([]),
+
+          init() {
+            this.$watch('incorrects', (value) => {
+              console.log('The incorrects are: ' + value);
+            });
+          },
 
           get correct() {
             return this.questions.length - this.incorrects.length;
@@ -44,16 +50,24 @@
           onSetValue(idx, selectedOpts) {
             if (selectedOpts.length == this.questions[idx].solutions.length) {
               this.selectedOpts[idx] = selectedOpts;
+
+              const isCorrectAnswer = this.questions[idx].solutions.every((el) => selectedOpts.includes(String(el)));
+              if (!isCorrectAnswer) this.incorrects.push(idx + 1);
             }
           },
 
-          onFinish() {
-            this.selectedOpts = this.selectedOpts.concat(Array(this.questions.length - this.selectedOpts.length).fill([]));
+          onRestartForm() {
+            this.incorrects = [];
 
-            this.questions.forEach((question, idx) => {
-              const isCorrectAnswer = [...question.solutions].every((el) => [...this.selectedOpts][idx].includes(String(el)));
-              if (!isCorrectAnswer) this.incorrects.push(idx + 1);
+            this.selectedOpts = [];
+
+            document.querySelectorAll('ul[x-data]').forEach((el) => {
+              el._x_dataStack[0].val = [];
             });
+          },
+
+          onFinish() {
+            this.selectedOpts = [...this.selectedOpts, ...Array(this.questions.length - this.selectedOpts.length).fill([])];
           },
         }));
       });
@@ -62,8 +76,17 @@
 
   <body class="font-sans text-darkslategrey">
     <form x-data="model" class="p-2">
-      <button type="button" x-show="!finished" @click="onFinish()" class="bg-green-600 text-white py-2 px-4 rounded text-lg">
+      <button type="button" x-show="!finished" @click="onFinish()" class="bg-green-600 text-white py-1 px-2 rounded">
         SKIP QUIZZ
+      </button>
+
+      <button
+        type="button"
+        x-show="selectedOpts.length > 0"
+        @click="onRestartForm()"
+        class="bg-green-600 text-white py-1 px-2 rounded"
+      >
+        RESTART QUIZZ
       </button>
 
       <progress
@@ -81,18 +104,17 @@
         <hr class="my-2" />
       </div>
 
-      <template x-for="(item, index) in questions">
+      <template x-for="(item, index) in questions" :key="index">
         <ul
           x-data="{ val: [] }"
           x-show="index == selectedOpts.length || finished"
           x-transition
-          x-init="$nextTick(() => $dispatch('rendered'))"
-          @rendered="shuffleNodes($el, 'LI')"
+          x-init="$nextTick(() => shuffleNodes($el, 'LI'))"
           @change="onSetValue(index, val)"
-          class="list-none p-2 my-2 rounded-lg ring-2 ring-green-600 ring-inset"
+          class="list-none p-2 mb-2 rounded-lg bg-green-50 ring-2 ring-green-600 ring-inset"
+          :class="{ 'min-h-[calc(100lvh_-_5rem)]': !finished }"
         >
           <strong x-text="`Question ${index + 1}:`" class="block text-green-600"></strong>
-
           <span x-text="item.question"></span>
 
           <template x-for="(opt, optId) in item.options" :key="optId">
