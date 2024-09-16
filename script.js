@@ -12,7 +12,7 @@ const flags = args.reduce((acc, arg, i) => (arg.startsWith('--') ? { ...acc, [ar
 console.log('Parsed Flags:', flags);
 
 function filterQuestions(data, keywords, excludeIndexes) {
-  const lowerKeywords = keywords.map((keyword) => keyword.toLowerCase());
+  const lowerKeywords = keywords.length ? keywords.map((keyword) => keyword.toLowerCase()) : [''];
 
   return data.filter(
     (item) =>
@@ -45,33 +45,8 @@ function writeToAlpine({ devMode = fase, length = 65, keywords = [] }) {
   fs.writeFileSync(destination, alpineTmpl + stringToAdd, 'utf8');
 }
 
-// 15 + 20 + 30 + 53
-writeToAlpine({
-  devMode: flags.dev === 'true',
-  length: +flags.len,
-  keywords: [
-    'Architected',
-    'pillar',
-    'framework',
-    'Responsibility',
-    'CAF',
-    'Adoption',
-    'Partner Network',
-    'APN',
-    'Support',
-    'Enterprise',
-    'Partner Solution',
-    'Quick Starts',
-    'Operational Excellence',
-    'Performance Efficiency',
-    'Cost Optimization',
-    'Developer Support',
-    'Concierge',
-    'phone',
-  ],
-});
-
-/* writeToAlpine(1000, [
+// Networking & Security
+const keywords1 = [
   'vpn',
   'vpc',
   'Gateway',
@@ -89,7 +64,48 @@ writeToAlpine({
   'site-to-site',
   'virtual private',
   'customer gateway',
-]);
- */
+];
+
+// Cloud Architecture & Partner Solutions
+const keywords2 = [
+  'Architected',
+  'pillar',
+  'framework',
+  'Responsibility',
+  'CAF',
+  'Adoption',
+  'Partner Network',
+  'APN',
+  'Support',
+  'Enterprise',
+  'Partner Solution',
+  'Quick Starts',
+  'Operational Excellence',
+  'Performance Efficiency',
+  'Cost Optimization',
+  'Developer Support',
+  'Concierge',
+  'phone',
+  'Marketplace',
+];
+
+// Cost Management & Pricing
+const keywords3 = [
+  'cost',
+  'discount',
+  'Pricing',
+  'Calculator',
+  'pay-as-you-go',
+  'price',
+  'Budget',
+  'billing',
+  'Compute Optimiz',
+  'Saving',
+];
 
 // node script.js --dev true --len 10
+writeToAlpine({
+  devMode: flags.dev === 'true',
+  length: +flags.len,
+  keywords: keywords2,
+});

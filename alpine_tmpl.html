@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
     <title>Quizz CLF-C02</title>
 
     <!-- Alpine Plugins -->
@@ -16,56 +16,78 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
+      function fisherYatesShuffle(array) {
+        let i = array.length;
+        while (i--) {
+          let j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+        }
+        return array;
+      }
+
+      function formatIncorrectLabel(incorrects) {
+        if (incorrects.length === 0) return 'None';
+
+        return incorrects
+          .reduce((acc, next, idx) => (idx + 1 === incorrects.length ? `${acc} and ${next}` : `${acc}, ${next}`), '')
+          .replace(/^(, | and )/, '');
+      }
+
       document.addEventListener('alpine:init', () => {
         Alpine.data('model', () => ({
-          questions,
-          selectedOpts: Alpine.$persist(Array.from({ length: this.questions.length }, () => [])),
-          doneIndexes: Alpine.$persist([]),
-
-          incorrects: [],
-          correct: 0,
-          finished: false,
-          rate: 0,
-          failedQuestionIndexes: [],
+          questionList: questions,
+          selectedOpts: Alpine.$persist(Array.from({ length: questions.length }, () => [])),
+          reaIndexes: Alpine.$persist({}),
+          result: {},
 
           get currentIndex() {
-            return this.selectedOpts.findIndex((inner, idx) => inner.length < this.questions[idx].solutions.length);
+            return this.selectedOpts.findIndex((inner, idx) => inner.length < this.questionList[idx].solutions.length);
           },
 
-          init() {
-            this.$watch('selectedOpts', (value) => {
-              this.incorrects = this.questions.reduce((acc, next, idx) => {
-                const isCorrect = value[idx].every((e) => next.solutions.includes(+e));
-                if (isCorrect) {
-                  return acc;
-                }
-                return [...acc, idx];
-              }, []);
-
-              this.correct = this.questions.length - this.incorrects.length;
-              this.rate = Math.floor((this.correct / this.questions.length) * 100);
-
-              this.currentIndex = value.findIndex((inner, idx) => inner.length < this.questions[idx].solutions.length);
-              this.finished = this.currentIndex < 0;
-            });
+          get finished() {
+            return this.currentIndex < 0;
           },
 
-          shuffleNodes(parentElement, tagName) {
-            const childrenArray = [...parentElement.children].filter((el) => el.tagName == tagName);
-            childrenArray.sort(() => Math.random() - 0.5);
-            childrenArray.forEach((child) => parentElement.appendChild(child));
+          shuffleNodes(node) {
+            const shuffled = fisherYatesShuffle([...node.children].filter((el) => el.tagName == 'LI'));
+            shuffled.forEach((child) => node.appendChild(child));
           },
 
           onRestartQuizz() {
-            this.selectedOpts = Array.from({ length: this.questions.length }, () => []);
+            this.selectedOpts = Array.from({ length: this.questionList.length }, () => []);
+            this.questionList = this.questionList;
           },
 
           onSkipQuizz() {
-            this.selectedOpts = this.questions.map((q) => q.solutions);
+            this.selectedOpts = this.questionList.map((q) => q.solutions);
           },
 
-          onShowResult() {
-            console.log(this.incorrects.map((idx) => this.questions[idx].index));
+          getResults() {
+            const [incorrects, currentIndexes] = this.questionList.reduce(
+              (acc, next, idx) => {
+                const isCorrect = this.selectedOpts[idx].every((e) => next.solutions.includes(+e));
+                if (isCorrect) {
+                  return [acc[0], [...acc[1], next.index]];
+                }
+
+                return [[...acc[0], idx], acc[1]];
+              },
+              [[], []]
+            );
+
+            const correct = this.questionList.length - incorrects.length;
+
+            const rate = Math.floor((correct / this.questionList.length) * 100);
+
+            this.result = {
+              correctLabel: incorrects.length === 0 ? 'All correct!' : correct,
+              incorrectsLable: formatIncorrectLabel(incorrects),
+              rateLabel: `${rate}% (${rate >= 70 ? 'PASS 🏆' : 'FAIL 💔'})`,
+            };
+
+            if (currentIndexes.length) {
+              //  this.reaIndexes[new Date().toISOString()] = currentIndexes;
+            }
           },
         }));
       });
@@ -89,28 +111,27 @@
 
       <progress
         value="0"
-        :value="selectedOpts.length"
-        :max="questions.length"
+        :value="currentIndex"
+        :max="questionList.length"
         class="w-full h-2 bg-green-200 [&::-webkit-progress-value]:bg-green-600 [&::-moz-progress-bar]:bg-green-600 [&::-webkit-progress-bar]:bg-green-200"
       ></progress>
 
       <template x-if="finished">
-        <div class="my-4" x-init="onShowResult()">
-          <b>Correct count:</b> <span x-text="correct"></span><br />
-          <b>Incorrect answers:</b> <span x-text="`${incorrects.map(item => item + 1)}`"></span><br />
-          <b>Rate:</b>
-          <span x-text="`${rate}% (${rate >= 70 ? 'PASS' : 'FAIL'})`"></span>
+        <div class="my-4" x-init="getResults()">
+          <b>Correct count:</b> <span x-text="result.correctLabel"></span><br />
+          <b>Incorrect answers:</b> <span x-text="result.incorrectsLable"></span><br />
+          <b>Rate:</b> <span x-text="result.rateLabel"></span>
           <hr class="my-2" />
         </div>
       </template>
 
-      <template x-for="(item, index) in questions" :key="index">
+      <template x-for="(item, index) in questionList">
         <ul
           x-transition
           x-show="index == currentIndex || finished"
-          x-init="$nextTick(() => shuffleNodes($el, 'LI'))"
+          x-init="$nextTick(() => shuffleNodes($el))"
           class="list-none p-2 mb-2 rounded-lg bg-green-50 ring-2 ring-green-600 ring-inset"
-          :class="{ 'min-h-[calc(100lvh_-_5rem)]': !finished }"
+          :class="{ 'min-h-[calc(100dvh_-_5rem)]': !finished }"
         >
           <strong x-text="`Question ${index + 1}:`" class="block text-green-600"></strong>
           <span x-text="item.question"></span>
