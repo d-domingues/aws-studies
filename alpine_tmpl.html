@@ -7379,6 +7379,11 @@
           return indexes.map((index) => indexMap[index]);
         }
 
+        /*
+         *
+         * Alpine Data
+         *
+         */
         Alpine.data('model', () => ({
           questionList: indexMapping(questions, questionsIdxs),
 
@@ -7413,6 +7418,10 @@
           onSkipQuiz() {
             this.mostRecentSelectedOpts = this.questionList.map((q) => q.solutions);
           },
+
+          goBack() {},
+
+          goNext() {},
 
           getResults() {
             const [wrongQstIdxs, rightQstIdxs] = this.questionList.reduce(
@@ -7459,6 +7468,14 @@
         class="bg-blue-600 text-white py-1 px-2 rounded"
       >
         RESTART QUIZ
+      </button>
+
+      <button type="button" x-show="currentIndex || finished" @click="goBack()" class="bg-blue-600 text-white py-1 px-2 rounded">
+        Back
+      </button>
+
+      <button type="button" x-show="currentIndex || finished" @click="goNext()" class="bg-blue-600 text-white py-1 px-2 rounded">
+        Next
       </button>
 
       <progress
