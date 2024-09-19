@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Quizz CLF-C02</title>
+
+    <!-- Alpine Persist Plugins -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Alpine Core -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      function fisherYatesShuffle(array) {
+        let i = array.length;
+        while (i--) {
+          let j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+        }
+        return array;
+      }
+
+      document.addEventListener('alpine:init', () => {
+        Alpine.data('model', () => ({
+          questionList: questions,
+          selectedOpts: Alpine.$persist(Array.from({ length: questions.length }, () => [])).as(
+            JSON.stringify(questions.map((q) => q.index))
+          ),
+          reaIndexes: Alpine.$persist({}),
+          result: {},
+
+          get currentIndex() {
+            return this.selectedOpts.findIndex((inner, idx) => inner.length < this.questionList[idx].solutions.length);
+          },
+
+          get finished() {
+            return this.currentIndex < 0;
+          },
+
+          shuffleNodes(node) {
+            const shuffled = fisherYatesShuffle([...node.children].filter((el) => el.tagName == 'LI'));
+            shuffled.forEach((child) => node.appendChild(child));
+          },
+
+          onRestartQuizz() {
+            this.selectedOpts = Array.from({ length: this.questionList.length }, () => []);
+            this.result = {};
+          },
+
+          onSkipQuiz() {
+            this.selectedOpts = this.questionList.map((q) => q.solutions);
+          },
+
+          getResults() {
+            const [wrongQstIdxs, rightQstIdxs] = this.questionList.reduce(
+              (acc, next, idx) => {
+                const isCorrect = this.selectedOpts[idx].every((e) => next.solutions.includes(+e));
+                if (isCorrect) {
+                  return [acc[0], [...acc[1], next.index]];
+                }
+
+                return [[...acc[0], idx], acc[1]];
+              },
+              [[], []]
+            );
+
+            const correct = this.questionList.length - wrongQstIdxs.length;
+
+            const rate = Math.floor((correct / this.questionList.length) * 100);
+
+            this.result = {
+              wrongQstIdxs,
+              correctLabel: wrongQstIdxs.length === 0 ? 'All correct!' : correct,
+              rateLabel: `${rate}% (${rate >= 70 ? 'PASS 🏆' : 'FAIL 💔'})`,
+            };
+
+            if (rightQstIdxs.length) {
+              //  this.reaIndexes[new Date().toISOString()] = rightQstIdxs;
+            }
+          },
+        }));
+      });
+    </script>
+  </head>
+
+  <body class="font-sans text-darkslategrey">
+    <form x-data="model" class="p-2">
+      <button type="button" x-show="!finished" @click="onSkipQuiz()" class="bg-green-600 text-white py-1 px-2 rounded">
+        SKIP QUIZ
+      </button>
+
+      <button
+        type="button"
+        x-show="currentIndex || finished"
+        @click="onRestartQuizz()"
+        class="bg-green-600 text-white py-1 px-2 rounded"
+      >
+        RESTART QUIZ
+      </button>
+
+      <progress
+        value="0"
+        :value="`${finished ? questionList.length : currentIndex }`"
+        :max="questionList.length"
+        class="w-full h-2 bg-green-200 [&::-webkit-progress-value]:bg-green-600 [&::-moz-progress-bar]:bg-green-600 [&::-webkit-progress-bar]:bg-green-200"
+      ></progress>
+
+      <template x-if="finished">
+        <div class="mb-4" x-init="getResults()">
+          <b>Correct count:</b> <span x-text="result.correctLabel"></span><br />
+          <b>Incorrect answers:</b>
+          <template x-for="section in result.wrongQstIdxs" :key="section">
+            <a
+              class="inline-block w-5 h-5 mr-1 text-center leading-5 text-xs font-medium text-white bg-red-500 rounded"
+              :href="`#section${section}`"
+              x-text="section + 1"
+            ></a>
+          </template>
+          <br />
+          <b>Rate:</b> <span x-text="result.rateLabel"></span>
+        </div>
+      </template>
+
+      <template x-for="(item, index) in questionList" :key="index">
+        <ul
+          :id="`section${index}`"
+          x-transition
+          x-show="index == currentIndex || finished"
+          x-init="$nextTick(() => shuffleNodes($el))"
+          :class="{
+            'list-none p-2 rounded-lg bg-green-50 ring-2 ring-green-600 ring-inset': true,
+            'min-h-[calc(100dvh_-_4.5rem)]': !finished,
+            'mb-2': finished,
+            'bg-red-50 ring-red-800': result.wrongQstIdxs?.includes(index)
+          }"
+        >
+          <strong x-text="`Question ${index + 1}:`" class="block text-green-600"></strong>
+          <span x-text="item.question"></span>
+
+          <template x-for="(opt, optId) in item.options" :key="optId">
+            <li
+              :class="{ 'my-1 p-1 rounded': true, 'bg-green-300 ring-1 ring-green-400': item.solutions.includes(optId) && finished }"
+            >
+              <input
+                type="checkbox"
+                :id="`opt-${index}-${optId}`"
+                :value="optId"
+                :disabled="finished"
+                x-model="selectedOpts[index]"
+                class="w-5 h-5 accent-green-600 rounded align-bottom"
+              />
+              <label
+                x-text="opt"
+                :for="`opt-${index}-${optId}`"
+                :class="{ 'text-sm': true, 'text-gray-500': !item.solutions.includes(optId) && finished }"
+              ></label>
+            </li>
+          </template>
+        </ul>
+      </template>
+    </form>
+  </body>
+</html>
+<script> questions=[{"index":230,"question":"A firm wants to maintain the same data on Amazon Simple Storage Service (Amazon S3) between its production account and multiple test accounts. Which technique should you choose to copy data into multiple test accounts while retaining object metadata?","options":["Amazon S3 Storage Classes","Amazon S3 Bucket Policy","Amazon S3 Replication","Amazon S3 Transfer Acceleration (Amazon S3TA)"],"solutions":[2]},{"index":738,"question":"Which AWS Cloud design principles can help increase reliability? (Select TWO.)","options":["Adopting a consumption model","Using monolithic architecture","Automatically recovering from failure","Testing recovery procedures","Measuring overall efficiency"],"solutions":[2,3]},{"index":195,"question":"AWS Identity and Access Management (AWS IAM) policies are written as JSON documents. Which of the following are mandatory elements of an IAM policy?","options":["Effect, Action","Effect, Sid","Action, Condition","Sid, Principal"],"solutions":[0]},{"index":188,"question":"A leading research firm needs to access information available in old patents and documents (such as PDFs, Text Files, Word documents, etc) present in its huge knowledge base. The firm is looking for a powerful search tool that can dig into these knowledge resources and return the most relevant files/documents. Which of the following is the correct service to address this requirement?","options":["Amazon Lex","Amazon Comprehend","Amazon Kendra","Amazon Personalize"],"solutions":[2]},{"index":54,"question":"Which entity ensures that your application on Amazon Elastic Compute Cloud (Amazon EC2) always has the right amount of capacity to handle the current traffic demand?","options":["Network Load Balancer","Amazon EC2 Auto Scaling","Multi-AZ deployment","Application Load Balancer"],"solutions":[1]}] </script>

@@ -31,10 +31,10 @@ function writeToAlpine({ devMode = fase, length = 65, keywords = [] }) {
   const randomQuestions = shuffledQuestions.slice(0, length);
 
   const nextDoneQuestions = randomQuestions.map((q) => q.index);
-  console.log('>>> questionscount: ', nextDoneQuestions.length);
+  console.log('>>> questions count: ', nextDoneQuestions.length);
 
   const alpineTmpl = fs.readFileSync('./alpine_tmpl.html', 'utf8');
-  const stringToAdd = `<script> questions=${JSON.stringify(randomQuestions)} </script>`;
+  const stringToAdd = `<script> globalThis.questionsIdxs=${JSON.stringify(randomQuestions.map((q) => q.index))}; </script>`;
 
   let destination = devMode ? 'quizz.html' : '../../OneDrive/quizz.html';
 
@@ -45,67 +45,58 @@ function writeToAlpine({ devMode = fase, length = 65, keywords = [] }) {
   fs.writeFileSync(destination, alpineTmpl + stringToAdd, 'utf8');
 }
 
-// Networking & Security
-const keywords1 = [
-  'vpn',
-  'vpc',
-  'Gateway',
-  'NAT',
-  'access control',
-  'NACL',
-  'Security Group',
-  'Direct Connect',
-  'PrivateLink',
-  'Transit',
-  'endpoint',
-  'Route table',
-  'subnet',
-  'flow log',
-  'site-to-site',
-  'virtual private',
-  'customer gateway',
-];
-
-// Cloud Architecture & Partner Solutions
-const keywords2 = [
-  'Architected',
-  'pillar',
-  'framework',
-  'Responsibility',
-  'CAF',
-  'Adoption',
-  'Partner Network',
-  'APN',
-  'Support',
-  'Enterprise',
-  'Partner Solution',
-  'Quick Starts',
-  'Operational Excellence',
-  'Performance Efficiency',
-  'Cost Optimization',
-  'Developer Support',
-  'Concierge',
-  'phone',
-  'Marketplace',
-];
-
-// Cost Management & Pricing
-const keywords3 = [
-  'cost',
-  'discount',
-  'Pricing',
-  'Calculator',
-  'pay-as-you-go',
-  'price',
-  'Budget',
-  'billing',
-  'Compute Optimiz',
-  'Saving',
+const keywords = [
+  // 1. Networking & Security
+  [
+    'vpn',
+    'vpc',
+    'Gateway',
+    'NAT',
+    'access control',
+    'NACL',
+    'Security Group',
+    'Direct Connect',
+    'PrivateLink',
+    'Transit',
+    'endpoint',
+    'Route table',
+    'subnet',
+    'flow log',
+    'site-to-site',
+    'virtual private',
+    'customer gateway',
+  ],
+  // 2. Cloud Architecture & Partner Solutions
+  [
+    'Architected',
+    'pillar',
+    'framework',
+    'Responsibility',
+    'CAF',
+    'Adoption',
+    'Partner Network',
+    'APN',
+    'Support',
+    'Enterprise',
+    'Partner Solution',
+    'Quick Starts',
+    'Operational Excellence',
+    'Performance Efficiency',
+    'Cost Optimization',
+    'Developer Support',
+    'Concierge',
+    'phone',
+    'Marketplace',
+  ],
+  // 3. Cost Management & Pricing (64, 65)
+  ['cost', 'discount', 'Pricing', 'Calculator', 'pay-as-you-go', 'price', 'Budget', 'billing', 'Compute Optimiz', 'Saving'],
+  // 4. security and compliance
+  ['security', 'cumpliance', 'ACM', 'cerfificate', 'https', 'TLS', 'SSL', 'KMS', 'secrets'],
 ];
 
 // node script.js --dev true --len 10
 writeToAlpine({
   devMode: flags.dev === 'true',
   length: +flags.len,
-  keywords: keywords2,
+  // keywords: keywords[+flags.topic - 1],
 });
