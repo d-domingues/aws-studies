@@ -7539,11 +7539,8 @@
             :id="`section${index}`"
             x-transition
             x-show="index == answerIdx || finished"
+            x-init="$nextTick(() => shuffleNodes($el)); $watch('$store.result', value => isWrong = value.wrongQstIdxs?.includes(index))"
             x-data="{ isWrong: $store.result.wrongQstIdxs?.includes(index) }"
-            x-init="$nextTick(() => {
-              shuffleNodes($el);
-              $watch('$store.result', value => isWrong = value.wrongQstIdxs?.includes(index))
-            })"
             :class="{
               'list-none p-2 rounded-lg bg-blue-50 ring-2 ring-blue-600 ring-inset': true,
               'min-h-[calc(100dvh_-_4.5rem)]': !finished,
@@ -7553,15 +7550,15 @@
           >
             <strong x-text="`Question ${index + 1}:`" class="block text-blue-600" :class="{ 'text-red-900': isWrong }"></strong>
             <span x-text="item.question"></span>
-            <template x-for="(opt, optIdx) in item.options" :key="optIdx">
+            <template x-for="(opt, optId) in item.options" :key="optId">
               <li
                 x-id="['opt']"
-                :class="{ 'my-1 p-1 rounded': true, 'bg-gray-300 ring-1 ring-gray-400': item.solutions.includes(optIdx) && finished }"
+                :class="{ 'my-1 p-1 rounded': true, 'bg-gray-300 ring-1 ring-gray-400': item.solutions.includes(optId) && finished }"
               >
                 <input
                   type="checkbox"
                   :id="$id('opt', item.id)"
-                  :value="optIdx"
+                  :value="optId"
                   :disabled="finished"
                   x-model="history[index]"
                   class="w-5 h-5 accent-blue-600 rounded align-sub"
@@ -7569,7 +7566,7 @@
                 <label
                   x-text="opt"
                   :for="$id('opt')"
-                  :class="{ 'text-sm': true, 'text-gray-500': !item.solutions.includes(optIdx) && finished }"
+                  :class="{ 'text-sm': true, 'text-gray-500': !item.solutions.includes(optId) && finished }"
                 ></label>
               </li>
             </template>
@@ -7579,3 +7576,4 @@
     </form>
   </body>
 </html>
+<script> globalThis.questionsIdxs=[761,20,281,96,269,419,207,132,118,391]; </script>

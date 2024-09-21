@@ -36,7 +36,7 @@ function writeToAlpine({ devMode = fase, length = 65, keywords = [] }) {
   const alpineTmpl = fs.readFileSync('./alpine_tmpl.html', 'utf8');
   const stringToAdd = `<script> globalThis.questionsIdxs=${JSON.stringify(randomQuestions.map((q) => q.index))}; </script>`;
 
-  let destination = devMode ? 'quizz.html' : '../../OneDrive/quizz.html';
+  let destination = devMode ? 'quiz.html' : '../../OneDrive/quiz.html';
 
   if (!devMode) {
     fs.writeFileSync('done.json', JSON.stringify([...doneQuestions, ...nextDoneQuestions]));
@@ -90,13 +90,51 @@ const keywords = [
   ],
   // 3. Cost Management & Pricing (64, 65)
   ['cost', 'discount', 'Pricing', 'Calculator', 'pay-as-you-go', 'price', 'Budget', 'billing', 'Compute Optimiz', 'Saving'],
-  // 4. security and compliance
-  ['security', 'cumpliance', 'ACM', 'cerfificate', 'https', 'TLS', 'SSL', 'KMS', 'secrets'],
+  // 4. Infrastructure Security and Threat Management:
+  [
+    'TLS',
+    'SSL',
+    'cerfificate',
+    'HTTPS',
+    'ACM',
+    'Certificate Manager',
+    'KMS',
+    'Key Management',
+    'Secrets',
+    'Firewall',
+    'WAF',
+    'Shield',
+    'GuardDuty',
+    'Detective',
+    'Inspector',
+    'IAM',
+    'cognito',
+    'Identity and Access Management',
+    'Macie',
+    'Security Hub',
+    'Control Tower',
+    'Bucket Policies',
+  ],
+  // 5. Monitoring, Auditing, and Compliance:
+  [
+    'CloudWatch',
+    'Logs',
+    'Metrics',
+    'CloudTrail',
+    'Health',
+    'aws Config',
+    'Compliance',
+    'Advisor',
+    'Systems Manager',
+    'Trusted Advisor',
+    'Amazon EventBridge',
+    'Audit Manager',
+  ],
 ];
 
 // node script.js --dev true --len 10
 writeToAlpine({
   devMode: flags.dev === 'true',
   length: +flags.len,
-  // keywords: keywords[+flags.topic - 1],
+  keywords: keywords[+flags.topic - 1],
 });
