@@ -7412,7 +7412,7 @@
 
             this.wrongQstIdxs = wrongQstIdxs;
 
-            this.correctLabel = wrongQstIdxs.length === 0 ? 'All correct!' : correct;
+            this.correctLabel = `${correct} of ${questionList.length + 1}`;
 
             this.rateLabel = `${rate}% (${rate >= 70 ? 'PASS 🏆' : 'FAIL 💔'})`;
 
@@ -7477,13 +7477,15 @@
           },
 
           goBack() {
+            if (this.historyIdx <= 0) return;
             this.$store.result.wrongQstIdxs = [];
-            this.historyIdx > 0 ? this.historyIdx-- : null;
+            this.historyIdx--;
           },
 
           goNext() {
+            if (this.historyIdx >= this.group.length - 1) return;
             this.$store.result.wrongQstIdxs = [];
-            this.historyIdx < this.group.length - 1 ? this.historyIdx++ : null;
+            this.historyIdx++;
           },
         }));
       });
@@ -7564,7 +7566,7 @@
                   :value="optIdx"
                   :disabled="finished"
                   x-model="history[index]"
-                  class="w-5 h-5 accent-blue-600 rounded align-sub"
+                  class="w-4 h-4 accent-blue-600 rounded align-sub"
                 />
                 <label
                   x-text="opt"

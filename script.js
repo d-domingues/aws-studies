@@ -36,7 +36,7 @@ function writeToAlpine({ devMode = fase, length = 65, keywords = [] }) {
   const alpineTmpl = fs.readFileSync('./alpine_tmpl.html', 'utf8');
   const stringToAdd = `<script> globalThis.questionsIdxs=${JSON.stringify(randomQuestions.map((q) => q.index))}; </script>`;
 
-  let destination = devMode ? 'quiz.html' : '../../OneDrive/quiz.html';
+  let destination = devMode ? 'quiz.html' : '../../OneDrive/quizes/quiz.html';
 
   if (!devMode) {
     fs.writeFileSync('done.json', JSON.stringify([...doneQuestions, ...nextDoneQuestions]));
@@ -46,7 +46,7 @@ function writeToAlpine({ devMode = fase, length = 65, keywords = [] }) {
 }
 
 const keywords = [
-  // 1. Networking & Security
+  // 1. Networking
   [
     'vpn',
     'vpc',
@@ -130,6 +130,8 @@ const keywords = [
     'Amazon EventBridge',
     'Audit Manager',
   ],
+  // 6.
+  ['cloudfront'],
 ];
 
 // node script.js --dev true --len 10
