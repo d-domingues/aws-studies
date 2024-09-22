@@ -7412,7 +7412,7 @@
 
             this.wrongQstIdxs = wrongQstIdxs;
 
-            this.correctLabel = `${correct} of ${questionList.length + 1}`;
+            this.correctLabel = `${correct} of ${questionList.length}`;
 
             this.rateLabel = `${rate}% (${rate >= 70 ? 'PASS 🏆' : 'FAIL 💔'})`;
 
@@ -7461,9 +7461,9 @@
             }
           },
 
-          shuffleNodes(node) {
-            const shuffled = fisherYatesShuffle([...node.children].filter((el) => el.tagName == 'LI'));
-            shuffled.forEach((child) => node.appendChild(child));
+          shuffleNodes() {
+            const shuffled = fisherYatesShuffle([...this.$el.children].filter((el) => el.tagName == 'LI'));
+            shuffled.forEach((child) => this.$el.appendChild(child));
           },
 
           onRestartQuiz() {
@@ -7473,7 +7473,7 @@
           },
 
           onSkipQuiz() {
-            this.history = this.questionList.map((q) => q.solutions);
+            this.answerIdx = -1;
           },
 
           goBack() {
@@ -7488,12 +7488,52 @@
             this.historyIdx++;
           },
         }));
+
+        Alpine.data('resultComp', () => ({
+          wrongQstIdxs: [],
+          correctLabel: '',
+          rateLabel: '',
+
+          init() {
+            const [wrongQstIdxs, rightQstIdxs] = this.compareAnswers(questionList, history);
+
+            const correct = questionList.length - wrongQstIdxs.length;
+
+            const rate = Math.floor((correct / questionList.length) * 100);
+
+            this.wrongQstIdxs = wrongQstIdxs;
+
+            this.correctLabel = `${correct} of ${questionList.length}`;
+
+            this.rateLabel = `${rate}% (${rate >= 70 ? 'PASS 🏆' : 'FAIL 💔'})`;
+
+            if (rightQstIdxs.length) {
+              //  this.reaIndexes[new Date().toISOString()] = rightQstIdxs;
+            }
+
+            this.$dispatch('showResults', wrongQstIdxs);
+          },
+
+          compareAnswers(questionList, history) {
+            return questionList.reduce(
+              (acc, next, idx) => {
+                const isCorrect = history[idx].every((e) => next.solutions.includes(+e));
+                if (isCorrect) {
+                  return [acc[0], [...acc[1], next.index]];
+                }
+
+                return [[...acc[0], idx], acc[1]];
+              },
+              [[], []]
+            );
+          },
+        }));
       });
     </script>
   </head>
 
   <body class="font-sans text-darkslategrey">
-    <form x-data="model" class="p-2">
+    <form x-data="model" class="p-2" @test="console.log($event.detail)">
       <button type="button" x-show="!finished" @click="onSkipQuiz()" class="bg-blue-600 text-white py-1 px-2 rounded">
         SKIP QUIZ
       </button>
@@ -7543,7 +7583,7 @@
             x-show="index == answerIdx || finished"
             x-data="{ isWrong: $store.result.wrongQstIdxs?.includes(index) }"
             x-init="$nextTick(() => {
-              shuffleNodes($el);
+              shuffleNodes();
               $watch('$store.result', value => isWrong = value.wrongQstIdxs?.includes(index))
             })"
             :class="{
@@ -7581,4 +7621,4 @@
     </form>
   </body>
 </html>
-<script> globalThis.questionsIdxs=[261,413,26,721,47,395,297,305,326,426,695,199,536,603,107,371,741,127,728,715,705,438,118,541,613,51,374,380,757,136,177,138,379,674,747,419,755,11,597,140,237,335,737,700,150,774,385,77,321,515,745,348,514,751,50,655,699,760,154,445,580,703,153,129,165,761,3,720,16,280,587,160,527,416,686,170,236,494,252,669,180,328,767,187,71,600,678,773,251,552,420,676,590,269,627,662,726,716,666,723,753,204,245,64,226,775,584,179,325,517,712,693,234]; </script>
+<script> globalThis.questionsIdxs=[613,374,666,674,118,261,695,371,3,760,179,678,395,51,153,328,517,514,693,699,603,64,726,587,627,655,676,721,269,747,745,226,716,234,600,737,753,757,775,597,662,703,686,552,755,761,419,590]; </script>
