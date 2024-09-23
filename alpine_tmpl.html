@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Quizz CLF-C02</title>
+    <title>Quiz CLF-C02</title>
 
     <!-- Alpine Plugins -->
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
@@ -7476,6 +7476,10 @@
             this.answerIdx = -1;
           },
 
+          onUndo() {
+            this.history[this.answerIdx - 1] = [];
+          },
+
           goBack() {
             if (this.historyIdx <= 0) return;
             this.$store.result.wrongQstIdxs = [];
@@ -7535,7 +7539,7 @@
   <body class="font-sans text-darkslategrey">
     <form x-data="model" class="p-2" @test="console.log($event.detail)">
       <button type="button" x-show="!finished" @click="onSkipQuiz()" class="bg-blue-600 text-white py-1 px-2 rounded">
-        SKIP QUIZ
+        SKIP
       </button>
 
       <button
@@ -7544,12 +7548,12 @@
         @click="onRestartQuiz()"
         class="bg-blue-600 text-white py-1 px-2 rounded"
       >
-        RESTART QUIZ
+        RESTART
       </button>
 
-      <button type="button" @click="goBack()" class="bg-blue-600 text-white py-1 px-2 rounded">Back</button>
-
-      <button type="button" @click="goNext()" class="bg-blue-600 text-white py-1 px-2 rounded">Next</button>
+      <button x-show="answerIdx > 0" type="button" @click="onUndo()" class="bg-blue-600 text-white py-1 px-2 rounded">
+        ⤺ Undo
+      </button>
 
       <progress
         value="0"
