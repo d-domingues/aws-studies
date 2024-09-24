@@ -1,5 +1,5 @@
 const questions = require('./questions.json');
-const doneQuestions = require('./done.json');
+const doneQuestions = []; // require('./done.json');
 const fs = require('fs');
 
 const args = process.argv.slice(2);
