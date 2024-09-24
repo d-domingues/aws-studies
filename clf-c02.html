@@ -18,7 +18,7 @@
     <!-- Questions -->
     <script>
       globalThis.questions = [
-        {
+        /*     {
           index: 0,
           question:
             'Which service gives a personalized view of the status of the AWS services that are part of your Cloud architecture so that you can quickly assess the impact on your business when AWS service(s) are experiencing issues?',
@@ -7354,11 +7354,502 @@
           options: ['Amazon Inspector', 'AWS Shield', 'Amazon GuardDuty', 'Amazon Macie'],
           solutions: [3],
         },
+ */
+
+        {
+          index: 777,
+          question: 'Which Amazon S3 storage class is MOST cost-effective for unknown access patterns?',
+          options: [
+            'S3 Standard',
+            'S3 Standard-Infrequent Access (S3 Standard-IA)',
+            'S3 One Zone-Infrequent Access (S3 One Zone-IA)',
+            'S3 Intelligent-Tiering',
+          ],
+          solutions: [3],
+        },
+        {
+          index: 778,
+          question:
+            'A company is designing its AWS workloads so that components can be updated regularly and changes can be made in small, reversible increments. Which pillar of the AWS Well-Architected Framework does this design support?',
+          options: ['Security', 'Performance efficiency', 'Operational excellence', 'Reliability'],
+          solutions: [2],
+        },
+        {
+          index: 779,
+          question:
+            'A company wants to set up its workloads to perform their intended functions and recover quickly from failure. Which pillar of the AWS Well-Architected Framework aligns with these goals?',
+          options: ['Performance efficiency', 'Sustainability', 'Reliability', 'Security'],
+          solutions: [2],
+        },
+        {
+          index: 780,
+          question: 'Which option is an environment that consists of one or more data centers?',
+          options: ['Amazon CloudFront', 'Availability Zone', 'VPC', 'AWS Outposts'],
+          solutions: [1],
+        },
+        {
+          index: 781,
+          question:
+            'Which AWS resource can help a company reduce its costs in exchange for a usage commitment when using Amazon EC2 instances?',
+          options: ['Compute Savings Plans', 'Auto Scaling group', 'On-Demand Instance', 'EC2 instance store'],
+          solutions: [0],
+        },
+        {
+          index: 782,
+          question: 'How does AWS Cloud computing help businesses reduce costs? (Select TWO.)',
+          options: [
+            'AWS changes the name prices for services in every AWS Region.',
+            'AWS enables capacity to be adjusted on demand.',
+            'AWS offers discounts for Amazon EC2 instances that remain idle for more than 1 week.',
+            'AWS does not charge for data sent from the AWS Cloud to the internet.',
+            'AWS eliminates many of the costs of building and maintaining on-premises data centers.',
+          ],
+          solutions: [1, 4],
+        },
+        {
+          index: 783,
+          question: "Which AWS Cloud benefit is shown by an architecture's ability to withstand failures with minimal downtime?",
+          options: ['Agility', 'Elasticity', 'Scalability', 'High availability'],
+          solutions: [3],
+        },
+        {
+          index: 784,
+          question:
+            'A company wants to use a template to reliably provision, manage, and update its infrastructure in the AWS Cloud. Which AWS service will meet these requirements?',
+          options: ['AWS Lambda', 'AWS CloudFormation', 'AWS Fargate', 'AWS CodeDeploy'],
+          solutions: [1],
+        },
+        {
+          index: 785,
+          question: 'What is the customer ALWAYS responsible for managing, according to the AWS shared responsibility model?',
+          options: ['Software licenses', 'Networking', 'Customer data', 'Encryption keys'],
+          solutions: [2],
+        },
+        {
+          index: 786,
+          question:
+            "According to the AWS shared responsibility model, which activities are the customer's responsibility for security in the AWS Cloud? (Select TWO.)",
+          options: [
+            'Hardware maintenance',
+            'Amazon EC2 operating system patching',
+            'API access control for AWS resources',
+            'Configuration management of infrastructure devices',
+            'Maintenance of an Availability Zone',
+          ],
+          solutions: [1, 2],
+        },
+        {
+          index: 787,
+          question:
+            'Which Amazon S3 feature or storage class uses the AWS backbone network and edge locations to reduce latencies from the end user to Amazon S3?',
+          options: [
+            'S3 Cross-Region Replication',
+            'S3 Transfer Acceleration',
+            'S3 Event Notifications',
+            'S3 Standard-Infrequent Access (S3 Standard-IA)',
+          ],
+          solutions: [1],
+        },
+        {
+          index: 788,
+          question:
+            'A company requires an isolated environment within AWS for security purposes. Which action can be taken to accomplish this?',
+          options: [
+            'Create a separate Availability Zone to host the resources',
+            'Create a separate VPC to host the resources',
+            'Create a placement group to host the resources',
+            'Create an AWS Direct Connect connection between the company and AWS',
+          ],
+          solutions: [1],
+        },
+        {
+          index: 789,
+          question:
+            'Which AWS service or feature enables users to get one bill and easily track charges for multiple AWS accounts?',
+          options: ['AWS Organizations', 'Cost Explorer', 'AWS Trusted Advisor', 'AWS Management Console'],
+          solutions: [0],
+        },
+        {
+          index: 790,
+          question: 'Which AWS service provides storage that can be mounted across multiple Amazon EC2 instances?',
+          options: [
+            'Amazon WorkSpaces',
+            'Amazon Elastic File System (Amazon EFS)',
+            'AWS Database Migration Service (AWS DMS)',
+            'AWS Snowball Edge',
+          ],
+          solutions: [1],
+        },
+        {
+          index: 791,
+          question:
+            'A company has a global website with static content. Which AWS service will deliver the static content with low latency?',
+          options: ['AWS Lambda', 'Amazon CloudFront', 'Amazon EC2 Auto Scaling', 'AWS Compute Optimizer'],
+          solutions: [1],
+        },
+        {
+          index: 792,
+          question: 'Which service enables customers to audit API calls in their AWS accounts?',
+          options: ['AWS CloudTrail', 'AWS Trusted Advisor', 'Amazon Inspector', 'AWS X-Ray'],
+          solutions: [0],
+        },
+        {
+          index: 793,
+          question: 'How does consolidated billing help reduce costs for a company that has multiple AWS accounts?',
+          options: [
+            'It aggregates usage across accounts so that the company can reach volume discount thresholds sooner.',
+            'It offers an additional 5% discount on purchases of All Upfront Reserved Instances.',
+            'It provides a simplified billing invoice that the company can process more quickly than a standard invoice.',
+            'It gives AWS resellers the ability to bill their customers for usage.',
+          ],
+          solutions: [0],
+        },
+        {
+          index: 794,
+          question:
+            'A company needs a centralized, secure way to create and manage cryptographic keys. The company will use the keys across a wide range of AWS services and applications. The company needs to track and document when the keys are created, used, and deleted. Which AWS service or feature will meet these requirements?',
+          options: [
+            'AWS Secrets Manager',
+            'AWS License Manager',
+            'AWS Systems Manager Parameter Store',
+            'AWS Key Management Service (AWS KMS)',
+          ],
+          solutions: [3],
+        },
+        {
+          index: 795,
+          question: 'Which Reserved Instance (RI) provides the HIGHEST average cost savings compared to an On-Demand Instance?',
+          options: ['1-year No Upfront', 'Standard RI', '3-year All Upfront, Standard RI', 'Convertible RI'],
+          solutions: [2],
+        },
+        {
+          index: 796,
+          question: 'What is an AWS Region?',
+          options: [
+            'A broad set of global, cloud-based products that include compute, storage, and databases',
+            'A physical location around the world where data centers are clustered',
+            'One or more discrete data centers with redundant power, networking, and connectivity',
+            'A service that developers use to build applications that deliver latencies of single-digit milliseconds to users',
+          ],
+          solutions: [1],
+        },
+        {
+          index: 797,
+          question: 'Which AWS service keeps track of SSL/TLS certificates, creates new certificates, and processes renewals?',
+          options: [
+            'AWS Identity and Access Management (IAM)',
+            'AWS Certificate Manager (ACM)',
+            'AWS Config',
+            'AWS Trusted Advisor',
+          ],
+          solutions: [1],
+        },
+        {
+          index: 798,
+          question:
+            'A company has existing software licenses that it wants to bring to AWS, but the licensing model requires licensing physical cores. How can the company meet this requirement in the AWS Cloud?',
+          options: [
+            'Launch an Amazon EC2 instance with default tenancy',
+            'Launch an Amazon EC2 instance on a Dedicated Host',
+            'Create an On-Demand Capacity Reservation',
+            'Purchase Dedicated Reserved Instances',
+          ],
+          solutions: [1],
+        },
+        {
+          index: 799,
+          question:
+            "A company's system administrator discovers that someone logged in to the company's AWS account during the weekend and terminated an Amazon EC2 instance. Which AWS service should the system administrator use to identify who made this change?",
+          options: ['Amazon Inspector', 'Amazon Pinpoint', 'AWS CloudTrail', 'AWS Trusted Advisor'],
+          solutions: [2],
+        },
+        {
+          index: 800,
+          question:
+            'A company is moving its on-premises NoSQL database to the AWS Cloud. Which AWS service should the company use for the NoSQL database?',
+          options: ['Amazon Redshift', 'Amazon RDS for MySQL', 'Amazon Quantum Ledger Database (Amazon QLDB)', 'Amazon DynamoDB'],
+          solutions: [3],
+        },
+        {
+          index: 801,
+          question:
+            'Which of the following consists of one or more isolated data centers in the same regional area that are interconnected through low-latency networks?',
+          options: ['Availability Zone', 'Edge location', 'AWS Region', 'Private networking'],
+          solutions: [0],
+        },
+        {
+          index: 802,
+          question:
+            'A system automatically recovers from failure when a company launches its workload on the AWS Cloud services platform. Which pillar of the AWS Well-Architected Framework does this situation demonstrate?',
+          options: ['Reliability', 'Cost optimization', 'Performance efficiency', 'Operational excellence'],
+          solutions: [0],
+        },
+        {
+          index: 803,
+          question: 'Which AWS service is a relational database compatible with MySQL and PostgreSQL?',
+          options: ['Amazon Redshift', 'Amazon DynamoDB', 'Amazon Aurora', 'Amazon Neptune'],
+          solutions: [2],
+        },
+        {
+          index: 804,
+          question: 'Which AWS service helps users audit API activity across their AWS account?',
+          options: ['AWS CloudTrail', 'Amazon Inspector', 'AWS WAF', 'AWS Config'],
+          solutions: [0],
+        },
+        {
+          index: 805,
+          question:
+            'A company needs to schedule the rotation of database credentials in the AWS Cloud. Which AWS service should the company use to perform this task?',
+          options: [
+            'AWS Identity and Access Management (IAM)',
+            'AWS Managed Services (AMS)',
+            'Amazon RDS',
+            'AWS Secrets Manager',
+          ],
+          solutions: [3],
+        },
+        {
+          index: 806,
+          question: 'Which AWS service provides storage that can be mounted across multiple Amazon EC2 instances?',
+          options: [
+            'Amazon Workspaces',
+            'Amazon Elastic File System (Amazon EFS)',
+            'AWS Database Migration Service (AWS DMS)',
+            'AWS Snowball Edge',
+          ],
+          solutions: [1],
+        },
+        {
+          index: 807,
+          question: "Which AWS Cloud benefit is shown by an architecture's ability to withstand failures with minimal downtime?",
+          options: ['Agility', 'Elasticity', 'Scalability', 'High availability'],
+          solutions: [3],
+        },
+        {
+          index: 808,
+          question: 'Which of the following is included within the security pillar of the AWS Well-Architected Framework?',
+          options: ['Identity federation', 'Data protection', 'Incident reporting', 'Disaster recovery'],
+          solutions: [1],
+        },
+        {
+          index: 809,
+          question: 'Which AWS service helps users audit API activity across their AWS account?',
+          options: ['AWS CloudTrail', 'Amazon Inspector', 'AWS WAF', 'AWS Config'],
+          solutions: [0],
+        },
+        {
+          index: 810,
+          question: 'What is the total volume of data that can be stored in Amazon S3?',
+          options: ['10 PB', '50 PB', '100 PB', 'Virtually unlimited'],
+          solutions: [3],
+        },
+        {
+          index: 811,
+          question:
+            'A company wants to integrate its online shopping website with social media login credentials. Which AWS service can the company use to make this integration?',
+          options: [
+            'AWS Directory Service',
+            'AWS Identity and Access Management (IAM)',
+            'Amazon Cognito',
+            'AWS IAM Identity Center (AWS Single Sign-On)',
+          ],
+          solutions: [2],
+        },
+        {
+          index: 812,
+          question:
+            'A cloud practitioner needs to design a NoSQL database that is highly scalable, is durable, and requires minimal maintenance. Which AWS service meets these requirements?',
+          options: ['Amazon RDS for MySQL', 'Microsoft SQL Server on Amazon EC2', 'Amazon DynamoDB', 'Amazon Redshift'],
+          solutions: [2],
+        },
+        {
+          index: 813,
+          question:
+            'A company needs network access to be restricted to an Amazon EC2 instance for certain ports. Which AWS services or features will support this requirement? (Select TWO.)',
+          options: [
+            'Amazon Elastic Block Store (Amazon EBS)',
+            'Network ACLs',
+            'IAM Password rotation policy',
+            'Security groups',
+            'Amazon Route 53 record sets',
+          ],
+          solutions: [1, 3],
+        },
+        {
+          index: 814,
+          question:
+            "A company is using AWS Lambda. Which task is the company's responsibility, according to the AWS shared responsibility model?",
+          options: [
+            'Update the Lambda runtime language',
+            'Maintain the runtime environment',
+            'Maintain the networking infrastructure',
+            'Configure the resource',
+          ],
+          solutions: [3],
+        },
+        {
+          index: 815,
+          question:
+            'A company wants to build an application that consists entirely of microservices. Which AWS Cloud architecture design principle supports this goal?',
+          options: ['Think parallel.', 'Implement elasticity.', 'Stop guessing capacity.', 'Decouple components.'],
+          solutions: [3],
+        },
+        {
+          index: 816,
+          question:
+            'Which AWS service or feature can a company use to apply security rules to a subnet for Amazon EC2 instances?',
+          options: ['AWS WAF', 'AWS Shield', 'Network ACLs', 'Security groups'],
+          solutions: [2],
+        },
+        {
+          index: 817,
+          question:
+            'Which AWS service provides a fast, automated, and repeatable method of deploying AWS Cloud infrastructure to multiple AWS Regions?',
+          options: [
+            'Use AWS CodeStar to set up a continuous delivery toolchain',
+            'Create and launch an Amazon EC2 Amazon Machine Image (AMI) containing the source code',
+            'Create and use an AWS CloudFormation template',
+            'Use AWS Systems Manager to automate management tasks',
+          ],
+          solutions: [2],
+        },
+        {
+          index: 818,
+          question: 'Which AWS service is a fully hosted version control service?',
+          options: ['AWS CodeCommit', 'AWS CodeBuild', 'AWS CodeDeploy', 'AWS CodeStar'],
+          solutions: [0],
+        },
+        {
+          index: 819,
+          question: 'Which AWS service helps users audit API activity across their AWS account?',
+          options: ['AWS CloudTrail', 'Amazon Inspector', 'AWS WAF', 'AWS Config'],
+          solutions: [0],
+        },
+        {
+          index: 820,
+          question:
+            'Which AWS Cloud benefit helps companies achieve lower usage costs because of the aggregate of all AWS users?',
+          options: [
+            'No need to guess capacity',
+            'Ability to go global in minutes',
+            'Economies of scale',
+            'Increased speed and agility',
+          ],
+          solutions: [2],
+        },
+        {
+          index: 821,
+          question:
+            "A company wants to protect resources that the company hosts on AWS, including Application Load Balancers and Amazon CloudFront distributions. The company wants an AWS service that can provide near real-time visibility into attacks on the company's resources. The service must also have a dedicated AWS team to assist with distributed denial of service (DDoS) attacks. Which AWS service will meet these requirements?",
+          options: ['AWS WAF', 'AWS Shield Standard', 'Amazon Macie', 'AWS Shield Advanced'],
+          solutions: [3],
+        },
+        {
+          index: 822,
+          question: 'Which AWS service can convert text into lifelike speech?',
+          options: ['Amazon Polly', 'Amazon Textract', 'Amazon Transcribe', 'Amazon Comprehend'],
+          solutions: [0],
+        },
+        {
+          index: 823,
+          question: 'Which AWS service or feature can a company use to estimate AWS costs before provisioning workloads?',
+          options: ['AWS Pricing Calculator', 'AWS Cost and Usage Report', 'Cost Explorer', 'AWS Budgets'],
+          solutions: [0],
+        },
+        {
+          index: 824,
+          question:
+            'A company needs to run a workload that requires low-latency access to an on-premises data center. The company wants a fully managed service to extend its existing VPC to local resources. Which AWS service or resource should the company use?',
+          options: ['AWS Outposts', 'Amazon Connect', 'AWS Snowball Edge', 'Amazon WorkLink'],
+          solutions: [0],
+        },
+        {
+          index: 825,
+          question: 'Which task is the responsibility of AWS, according to the AWS shared responsibility model?',
+          options: [
+            'Patch the Amazon EC2 guest operating system',
+            'Upgrade the firmware of the network infrastructure',
+            'Apply password rotation for IAM users',
+            'Maintain least privilege access to the root user account',
+          ],
+          solutions: [1],
+        },
+        {
+          index: 826,
+          question:
+            'Which AWS benefit is demonstrated by on-demand technology services that enable companies to replace upfront fixed expenses with variable expenses?',
+          options: ['High availability', 'Economies of scale', 'Pay-as-you-go pricing', 'Global reach'],
+          solutions: [2],
+        },
+        {
+          index: 827,
+          question: 'Which AWS service provides disaster recovery solutions for Amazon EC2 instances? (Select TWO.)',
+          options: [
+            'EC2 Reserved Instances',
+            'EC2 Amazon Machine Images (AMIs)',
+            'Amazon Elastic Block Store (Amazon EBS) snapshots',
+            'AWS Shield',
+            'Amazon GuardDuty',
+          ],
+          solutions: [1, 2],
+        },
+        {
+          index: 828,
+          question: 'A company needs to block SQL injection attacks. Which AWS service or feature provides this functionality?',
+          options: ['AWS WAF', 'Network ACLs', 'Security groups', 'AWS Trusted Advisor'],
+          solutions: [0],
+        },
+        {
+          index: 829,
+          question: 'Which AWS service should a cloud practitioner use to identify security vulnerabilities of an AWS account?',
+          options: ['AWS Secrets Manager', 'Amazon Cognito', 'Amazon Macie', 'AWS Trusted Advisor'],
+          solutions: [3],
+        },
+        {
+          index: 830,
+          question: 'Which AWS feature grants temporary access to specific AWS resources?',
+          options: ['AWS IAM Access analyzer', 'Service control policies (SCPs)', 'Access control lists (ACLs)', 'IAM roles'],
+          solutions: [3],
+        },
+        {
+          index: 831,
+          question:
+            'A company is defining its AWS multi-account strategy. The company needs to control access to AWS services and consolidate billing across accounts. Which AWS service should the company use to meet these requirements?',
+          options: [
+            'AWS Organizations',
+            'AWS Identity and Access Management (IAM)',
+            'AWS Billing and Cost Management',
+            'Amazon Cognito',
+          ],
+          solutions: [0],
+        },
+        {
+          index: 832,
+          question:
+            'Which pillar of the AWS Well-Architected Framework includes the design principle of defining workloads, applications, and infrastructure as code (IaC)?',
+          options: ['Operational excellence', 'Reliability', 'Performance efficiency', 'Security'],
+          solutions: [0],
+        },
+        {
+          index: 833,
+          question:
+            'A company needs to schedule the rotation of database credentials in the AWS Cloud. Which AWS service should the company use to perform this task?',
+          options: [
+            'AWS Identity and Access Management (IAM)',
+            'AWS Managed Services (AMS)',
+            'Amazon RDS',
+            'AWS Secrets Manager',
+          ],
+          solutions: [3],
+        },
       ];
     </script>
 
     <script>
       document.addEventListener('alpine:init', () => {
+        /**
+         * Util functions
+         */
         function fisherYatesShuffle(array) {
           let i = array.length;
           while (i--) {
@@ -7379,49 +7870,33 @@
           return indexes.map((index) => indexMap[index]);
         }
 
-        /*
-         *
-         * Alpine Store
-         * RESULT
-         *
-         */
-        Alpine.store('result', {
-          wrongQstIdxs: [],
-          correctLabel: '',
-          rateLabel: '',
+        function compareAnswers(questionList, history) {
+          return questionList.reduce(
+            (acc, next, idx) => {
+              const isCorrect = history[idx].every((e) => next.solutions.includes(+e));
+              if (isCorrect) {
+                return [acc[0], [...acc[1], next.index]];
+              }
 
-          compareAnswers(questionList, history) {
-            return questionList.reduce(
-              (acc, next, idx) => {
-                const isCorrect = history[idx].every((e) => next.solutions.includes(+e));
-                if (isCorrect) {
-                  return [acc[0], [...acc[1], next.index]];
-                }
+              return [[...acc[0], idx], acc[1]];
+            },
+            [[], []]
+          );
+        }
 
-                return [[...acc[0], idx], acc[1]];
-              },
-              [[], []]
-            );
-          },
+        function filterQuestions(data, keywords, excludeIndexes) {
+          const lowerKeywords = keywords.length ? keywords.map((keyword) => keyword.toLowerCase()) : [''];
 
-          getResults(questionList, history) {
-            const [wrongQstIdxs, rightQstIdxs] = this.compareAnswers(questionList, history);
-
-            const correct = questionList.length - wrongQstIdxs.length;
-
-            const rate = Math.floor((correct / questionList.length) * 100);
-
-            this.wrongQstIdxs = wrongQstIdxs;
-
-            this.correctLabel = `${correct} of ${questionList.length}`;
-
-            this.rateLabel = `${rate}% (${rate >= 70 ? 'PASS 🏆' : 'FAIL 💔'})`;
-
-            if (rightQstIdxs.length) {
-              //  this.reaIndexes[new Date().toISOString()] = rightQstIdxs;
-            }
-          },
-        });
+          return data.filter(
+            (item) =>
+              !excludeIndexes.includes(item.index) &&
+              lowerKeywords.some(
+                (keyword) =>
+                  item.question.toLowerCase().includes(keyword) ||
+                  item.options.some((option) => option.toLowerCase().includes(keyword))
+              )
+          );
+        }
 
         /*
          *
@@ -7436,24 +7911,16 @@
           keywords: '',
           questionList: [],
 
-          filterQuestions(data, keywords, excludeIndexes) {
-            const lowerKeywords = keywords.length ? keywords.map((keyword) => keyword.toLowerCase()) : [''];
-
-            return data.filter(
-              (item) =>
-                !excludeIndexes.includes(item.index) &&
-                lowerKeywords.some(
-                  (keyword) =>
-                    item.question.toLowerCase().includes(keyword) ||
-                    item.options.some((option) => option.toLowerCase().includes(keyword))
-                )
-            );
-          },
-
-          submitForm() {
+          onBegin() {
             const doneIdxs = Object.keys(localStorage).flatMap((item) => JSON.parse(item));
-            const shuffledQuestions = this.filterQuestions(questions, [], doneIdxs).sort(() => 0.5 - Math.random());
+            const shuffledQuestions = filterQuestions(questions, [], doneIdxs).sort(() => 0.5 - Math.random());
             this.questionList = shuffledQuestions.slice(0, this.nrOfQuestions);
+            this.nrOfQuestions = this.questionList.length; // it might not result in as manny as the requested
+
+            if (!this.nrOfQuestions) {
+              return alert('No questions left');
+            }
+
             globalThis.storagekey = JSON.stringify(this.questionList.map((q) => q.index));
 
             this.step = 2;
@@ -7483,6 +7950,8 @@
 
           finished: false,
 
+          wrongQstIdxs: [],
+
           init() {
             this.$watch('answerIdx', (value) => (this.finished = value < 0));
 
@@ -7505,7 +7974,7 @@
           },
 
           onRestartQuiz() {
-            this.$store.result.wrongQstIdxs = [];
+            this.wrongQstIdxs = [];
             this.group.push(Array.from({ length: this.nrOfQuestions }, () => []));
             this.historyIdx = this.group.length - 1;
           },
@@ -7520,34 +7989,34 @@
 
           goBack() {
             if (this.historyIdx <= 0) return;
-            this.$store.result.wrongQstIdxs = [];
+            this.wrongQstIdxs = [];
             this.historyIdx--;
           },
 
           goNext() {
             if (this.historyIdx >= this.group.length - 1) return;
-            this.$store.result.wrongQstIdxs = [];
+            this.wrongQstIdxs = [];
             this.historyIdx++;
           },
         }));
 
         /**
          *
+         * RESULTS Component
          *
-         * RESULT
          */
         Alpine.data('resultComp', () => ({
-          wrongQstIdxs: [],
           correctLabel: '',
           rateLabel: '',
 
           init() {
-            const [wrongQstIdxs, rightQstIdxs] = this.compareAnswers(questionList, history);
+            const [wrongQstIdxs, rightQstIdxs] = compareAnswers(this.questionList, this.history);
 
             const correct = this.nrOfQuestions - wrongQstIdxs.length;
 
             const rate = Math.floor((correct / this.nrOfQuestions) * 100);
 
+            // upper scope wrongQstIdxs
             this.wrongQstIdxs = wrongQstIdxs;
 
             this.correctLabel = `${correct} of ${this.nrOfQuestions}`;
@@ -7557,22 +8026,6 @@
             if (rightQstIdxs.length) {
               //  this.reaIndexes[new Date().toISOString()] = rightQstIdxs;
             }
-
-            this.$dispatch('showResults', wrongQstIdxs);
-          },
-
-          compareAnswers(questionList, history) {
-            return questionList.reduce(
-              (acc, next, idx) => {
-                const isCorrect = history[idx].every((e) => next.solutions.includes(+e));
-                if (isCorrect) {
-                  return [acc[0], [...acc[1], next.index]];
-                }
-
-                return [[...acc[0], idx], acc[1]];
-              },
-              [[], []]
-            );
           },
         }));
       });
@@ -7584,7 +8037,7 @@
       <form class="max-w-lg mx-auto mt-10 p-6 bg-white rounded shadow">
         <!-- Number of Questions -->
         <div class="mb-4">
-          <label class="block text-gray-700 mb-2">Nr of Questions</label>
+          <label class="block text-gray-700 mb-2">Nr. of Questions</label>
           <div class="flex space-x-4">
             <template x-for="item in ['10', '25', '40', '65']">
               <label class="inline-flex items-center">
@@ -7623,7 +8076,7 @@
         </div>
 
         <!-- Submit Button -->
-        <button type="button" class="bg-blue-600 text-white py-1 px-2 rounded" @click="submitForm">Submit</button>
+        <button type="button" class="bg-blue-600 text-white py-1 px-2 rounded" @click="onBegin">Begin</button>
       </form>
     </template>
 
@@ -7654,11 +8107,12 @@
         ></progress>
 
         <template x-if="finished">
-          <div class="mb-4" x-init="$store.result.getResults(questionList, history)">
+          <div class="mb-4" x-data="resultComp">
             <b>Correct count:</b>
-            <span x-text="$store.result.correctLabel"></span><br />
+            <span x-text="correctLabel"></span><br />
             <b>Wrong:</b>
-            <template x-for="section in $store.result.wrongQstIdxs" :key="section">
+            <span x-show="!wrongQstIdxs.length">None</span>
+            <template x-for="section in wrongQstIdxs" :key="section">
               <a
                 class="inline-block w-5 h-5 mr-1 text-center leading-5 text-xs font-medium text-white bg-red-500 rounded"
                 :href="`#section${section}`"
@@ -7666,7 +8120,7 @@
               ></a>
             </template>
             <br />
-            <b>Rate:</b> <span x-text="$store.result.rateLabel"></span>
+            <b>Rate:</b> <span x-text="rateLabel"></span>
           </div>
         </template>
 
@@ -7676,17 +8130,17 @@
               :id="`section${index}`"
               x-transition
               x-show="index == answerIdx || finished"
-              x-data="{ isWrong: $store.result.wrongQstIdxs?.includes(index) }"
+              x-data="{ isWrong: wrongQstIdxs.includes(index) }"
               x-init="$nextTick(() => {
-              shuffleNodes();
-              $watch('$store.result', value => isWrong = value.wrongQstIdxs?.includes(index))
-            })"
+                shuffleNodes();
+                $watch('wrongQstIdxs', value => isWrong = value.includes(index))
+              })"
               :class="{
-              'list-none p-2 rounded-lg bg-blue-50 ring-2 ring-blue-600 ring-inset': true,
-              'min-h-[calc(100dvh_-_4.5rem)]': !finished,
-              'mb-2': finished,
-              'bg-gray-50 ring-red-800': isWrong
-            }"
+                'list-none p-2 rounded-lg bg-blue-50 ring-2 ring-blue-600 ring-inset': true,
+                'min-h-[calc(100dvh_-_4.5rem)]': !finished,
+                'mb-2': finished,
+                'bg-gray-50 ring-red-800': isWrong
+              }"
             >
               <strong x-text="`Question ${index + 1}:`" class="block text-blue-600" :class="{ 'text-red-900': isWrong }"></strong>
               <span x-text="item.question"></span>
