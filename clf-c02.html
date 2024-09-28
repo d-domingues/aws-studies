@@ -9114,7 +9114,10 @@
                 'bg-gray-50 ring-red-800': isWrong
               }"
             >
-              <strong x-text="`Question ${index + 1}:`" :class="{ 'block text-blue-600': true 'text-red-900': isWrong }"></strong>
+              <strong
+                x-text="`Question ${index + 1}:`"
+                :class="{ 'block text-blue-600': true, 'text-red-900': isWrong }"
+              ></strong>
               <span x-text="item.question"></span>
               <template x-for="(opt, optIdx) in item.options" :key="optIdx">
                 <li
