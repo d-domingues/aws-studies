@@ -53,6 +53,24 @@
 
         <!-- BEGIN -->
         <button type="button" class="bg-blue-600 text-white py-1 px-2 rounded" @click="onStart()">START</button>
+
+        <button
+          type="button"
+          class="bg-blue-600 text-white py-1 px-2 rounded"
+          @click="createItem({ col1: '789', col2: 'Item3' })"
+        >
+          Create Item
+        </button>
+        <button type="button" class="bg-blue-600 text-white py-1 px-2 rounded" @click="getItems()">Get All Items</button>
+        <button type="button" class="bg-blue-600 text-white py-1 px-2 rounded" @click="getItem('123')">Get Item</button>
+        <button
+          type="button"
+          class="bg-blue-600 text-white py-1 px-2 rounded"
+          @click="updateItem({ col1: '123', col2: 'UpdatedItem1' })"
+        >
+          Update Item
+        </button>
+        <button type="button" class="bg-blue-600 text-white py-1 px-2 rounded" @click="deleteItem('456')">Delete Item</button>
       </form>
     </template>
 

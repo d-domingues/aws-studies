@@ -1,9 +1,16 @@
 import persist from '@alpinejs/persist';
 import Alpine from 'alpinejs';
+import { Amplify } from 'aws-amplify';
+import '../style.css';
+import amplifyconfig from './amplifyconfiguration.json'; // Path may vary
+import { createItem, deleteItem, getItem, getItems, updateItem } from './api';
 import questionsJson from './questions.json';
-import './style.css';
 import { Question } from './types';
 import { compareAnswers, filterQuestions, fisherYatesShuffle } from './utils';
+
+const apiName = 'api79ff812e';
+
+Amplify.configure(amplifyconfig);
 
 const questions: Question[] = questionsJson;
 
@@ -25,6 +32,16 @@ Alpine.data('main', () => ({
   init() {
     console.log('>>>>>>>>>>>>>>>>>>>>>>>> FETCH QUESTIONS');
   },
+
+  createItem: (item: any) => createItem(item),
+
+  getItems: getItems,
+
+  getItem: (itemId: string) => getItem(itemId),
+
+  updateItem: (data: any) => updateItem(data),
+
+  deleteItem: (itemId: string) => deleteItem(itemId),
 
   onStart() {
     console.log('>>>> pressed start', this);
