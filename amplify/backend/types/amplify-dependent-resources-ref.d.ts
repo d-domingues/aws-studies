@@ -1,28 +1,25 @@
 export type AmplifyDependentResourcesAttributes = {
-  "api": {
-    "api79ff812e": {
-      "ApiId": "string",
-      "ApiName": "string",
-      "RootUrl": "string"
-    }
-  },
-  "function": {
-    "awsstudies273875ba": {
-      "Arn": "string",
-      "LambdaExecutionRole": "string",
-      "LambdaExecutionRoleArn": "string",
-      "Name": "string",
-      "Region": "string"
-    }
-  },
-  "storage": {
-    "dynamobcc20c69": {
-      "Arn": "string",
-      "Name": "string",
-      "PartitionKeyName": "string",
-      "PartitionKeyType": "string",
-      "Region": "string",
-      "StreamArn": "string"
-    }
-  }
-}
+  auth: {
+    awsstudies: {
+      AppClientID: 'string';
+      AppClientIDWeb: 'string';
+      IdentityPoolId: 'string';
+      IdentityPoolName: 'string';
+      UserPoolArn: 'string';
+      UserPoolId: 'string';
+      UserPoolName: 'string';
+    };
+  };
+  hosting: {
+    S3AndCloudFront: {
+      CloudFrontDistributionID: 'string';
+      CloudFrontDomainName: 'string';
+      CloudFrontOriginAccessIdentity: 'string';
+      CloudFrontSecureURL: 'string';
+      HostingBucketName: 'string';
+      Region: 'string';
+      S3BucketSecureURL: 'string';
+      WebsiteURL: 'string';
+    };
+  };
+};

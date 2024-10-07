@@ -1,63 +1,37 @@
 {
-  "api": {
-    "api79ff812e": {
-      "dependsOn": [
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "awsstudies273875ba"
-        }
-      ],
+  "api": {},
+  "auth": {
+    "awsstudies": {
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
       "providerPlugin": "awscloudformation",
-      "service": "API Gateway"
+      "service": "Cognito",
+      "serviceType": "managed"
     }
   },
-  "function": {
-    "awsstudies273875ba": {
-      "build": true,
-      "dependsOn": [
-        {
-          "attributeEnvMap": {
-            "Arn": "TABLE_ARN",
-            "Name": "TABLE_NAME"
-          },
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "storage",
-          "resourceName": "dynamobcc20c69"
-        }
-      ],
+  "function": {},
+  "hosting": {
+    "S3AndCloudFront": {
       "providerPlugin": "awscloudformation",
-      "service": "Lambda"
+      "service": "S3AndCloudFront"
     }
   },
-  "parameters": {
-    "AMPLIFY_function_awsstudies273875ba_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "awsstudies273875ba"
-        }
-      ]
-    },
-    "AMPLIFY_function_awsstudies273875ba_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "awsstudies273875ba"
-        }
-      ]
-    }
-  },
-  "storage": {
-    "dynamobcc20c69": {
-      "providerPlugin": "awscloudformation",
-      "service": "DynamoDB"
-    }
-  }
+  "storage": {}
 }

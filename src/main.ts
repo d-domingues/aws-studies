@@ -3,12 +3,11 @@ import Alpine from 'alpinejs';
 import { Amplify } from 'aws-amplify';
 import '../style.css';
 import amplifyconfig from './amplifyconfiguration.json'; // Path may vary
-import { createItem, deleteItem, getItem, getItems, updateItem } from './api';
+import { createItem, deleteItem, getItem, getItems, getQuestions, updateItem } from './api';
+import { handleSignIn } from './auth';
 import questionsJson from './questions.json';
 import { Question } from './types';
 import { compareAnswers, filterQuestions, fisherYatesShuffle } from './utils';
-
-const apiName = 'api79ff812e';
 
 Amplify.configure(amplifyconfig);
 
@@ -32,6 +31,10 @@ Alpine.data('main', () => ({
   init() {
     console.log('>>>>>>>>>>>>>>>>>>>>>>>> FETCH QUESTIONS');
   },
+
+  getQuestions: () => getQuestions(),
+
+  handleSignIn: () => handleSignIn({ username: 'user1', password: 'MyN3wP455' }),
 
   createItem: (item: any) => createItem(item),
 
