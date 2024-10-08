@@ -1,14 +1,12 @@
 import { del, get, post, put } from 'aws-amplify/api';
-import amplifyconfig from './amplifyconfiguration.json';
+// import amplifyconfig from './amplifyconfiguration.json';
 import { Question } from './types';
-//
-import questions from './questions.json';
 
-const apiName = amplifyconfig.aws_cloud_logic_custom[0].name;
+const apiName = ''; // amplifyconfig.aws_cloud_logic_custom[0].name;
 const path = '/questions';
 
 export async function getQuestions() {
-  return questions;
+  // return questions;
 
   try {
     const restOperation = get({

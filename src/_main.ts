@@ -117,7 +117,9 @@ const model = Alpine.data(
 
       init() {
         if (this.lastStoragekey) {
-          this.questionList = JSON.parse(this.lastStoragekey).map((qId: string) => this.questions.find((q) => q.id === qId));
+          this.questionList = JSON.parse(this.lastStoragekey).map((qId: string) =>
+            this.questions.find((q: Question) => q.id === qId)
+          );
 
           if (!this.groups[this.lastStoragekey].length) {
             this.groups[this.lastStoragekey].push(Array.from({ length: this.questionList.length }, () => []));
