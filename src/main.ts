@@ -3,21 +3,17 @@ import Alpine from 'alpinejs';
 import { Amplify } from 'aws-amplify';
 import '../style.css';
 import amplifyconfig from './amplifyconfiguration.json'; // Path may vary
-import { createItem, deleteItem, getItem, getItems, getQuestions, updateItem } from './api';
+import { getQuestions } from './api';
 import { handleSignIn } from './auth';
-import questionsJson from './questions.json';
 import { Question } from './types';
 import { compareAnswers, filterQuestions, fisherYatesShuffle } from './utils';
 
 Amplify.configure(amplifyconfig);
-
-const questions: Question[] = questionsJson;
-
 Alpine.plugin(persist);
-
 window.Alpine = Alpine;
 
 Alpine.data('main', () => ({
+  questions: [] as Question[],
   groups: Alpine.$persist<Record<string, string[][][]>>({}).as('groups'),
   lastStoragekey: Alpine.$persist<null | string>(null).as('lastStoragekey'),
 
@@ -28,27 +24,13 @@ Alpine.data('main', () => ({
   questionList: [] as Question[],
   wrongQstIdxs: [] as number[],
 
-  init() {
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>> FETCH QUESTIONS');
+  async init() {
+    this.questions = await getQuestions();
   },
-
-  getQuestions: () => getQuestions(),
 
   handleSignIn: () => handleSignIn({ username: 'user1', password: 'MyN3wP455' }),
 
-  createItem: (item: any) => createItem(item),
-
-  getItems: getItems,
-
-  getItem: (itemId: string) => getItem(itemId),
-
-  updateItem: (data: any) => updateItem(data),
-
-  deleteItem: (itemId: string) => deleteItem(itemId),
-
   onStart() {
-    console.log('>>>> pressed start', this);
-
     if (this.filter === 'new') {
       return this.goNormal();
     }
@@ -70,7 +52,7 @@ Alpine.data('main', () => ({
       includeKeywords = this.keywords.split(',');
     }
 
-    const result = filterQuestions(questions, includeKeywords, excludeIdx).sort(() => 0.5 - Math.random());
+    const result = filterQuestions(this.questions, includeKeywords, excludeIdx).sort(() => 0.5 - Math.random());
     if (!result.length) {
       return alert('No questions left');
     }
@@ -82,7 +64,7 @@ Alpine.data('main', () => ({
 
   goHard() {
     const wrongIds = Object.entries(this.groups).reduce((acc, [qIds, answers]) => {
-      const questionList = JSON.parse(qIds).map((qId: number) => questions.find((q) => q.id === qId));
+      const questionList = JSON.parse(qIds).map((qId: string) => this.questions.find((q) => q.id === qId));
 
       const res = answers.reduce((ans, next) => {
         const comp = compareAnswers(questionList, next);
@@ -135,7 +117,7 @@ const model = Alpine.data(
 
       init() {
         if (this.lastStoragekey) {
-          this.questionList = JSON.parse(this.lastStoragekey).map((qId: number) => questions.find((q) => q.id === qId));
+          this.questionList = JSON.parse(this.lastStoragekey).map((qId: string) => this.questions.find((q) => q.id === qId));
 
           if (!this.groups[this.lastStoragekey].length) {
             this.groups[this.lastStoragekey].push(Array.from({ length: this.questionList.length }, () => []));

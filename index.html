@@ -55,28 +55,10 @@
         <button type="button" class="bg-blue-600 text-white py-1 px-2 rounded" @click="onStart()">START</button>
 
         <button type="button" class="bg-blue-600 text-white py-1 px-2 rounded" @click="handleSignIn()">handleSignIn</button>
-
-        <button
-          type="button"
-          class="bg-blue-600 text-white py-1 px-2 rounded"
-          @click="createItem({ col1: '789', col2: 'Item3' })"
-        >
-          Create Item
-        </button>
-        <button type="button" class="bg-blue-600 text-white py-1 px-2 rounded" @click="getQuestions()">GET questions</button>
-        <button type="button" class="bg-blue-600 text-white py-1 px-2 rounded" @click="getItem('123')">Get Item</button>
-        <button
-          type="button"
-          class="bg-blue-600 text-white py-1 px-2 rounded"
-          @click="updateItem({ col1: '123', col2: 'UpdatedItem1' })"
-        >
-          Update Item
-        </button>
-        <button type="button" class="bg-blue-600 text-white py-1 px-2 rounded" @click="deleteItem('456')">Delete Item</button>
       </form>
     </template>
 
-    <template x-if="lastStoragekey">
+    <template x-if="lastStoragekey && questions.length">
       <form x-data="model" class="p-2">
         <!-- SKIP BTN -->
         <button type="button" x-show="!finished" @click="onSkipQuiz()" class="bg-blue-600 text-white py-1 px-2 rounded">
@@ -87,12 +69,7 @@
         <button x-show="answerIdx > 0" type="button" @click="onUndo()" class="bg-blue-600 text-white py-1 px-2 rounded">⤺</button>
 
         <!-- RESTART BTN -->
-        <button
-          type="button"
-          x-show="answerIdx || finished"
-          @click="onRestartQuiz()"
-          class="bg-blue-600 text-white py-1 px-2 rounded"
-        >
+        <button type="button" x-show="finished" @click="onRestartQuiz()" class="bg-blue-600 text-white py-1 px-2 rounded">
           ↺
         </button>
 

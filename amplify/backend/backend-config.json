@@ -1,5 +1,20 @@
 {
-  "api": {},
+  "api": {
+    "quizes": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "questionsFunction"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    }
+  },
   "auth": {
     "awsstudies": {
       "dependsOn": [],
@@ -26,12 +41,55 @@
       "serviceType": "managed"
     }
   },
-  "function": {},
+  "function": {
+    "questionsFunction": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributeEnvMap": {
+            "Arn": "TABLE_ARN",
+            "Name": "TABLE_NAME"
+          },
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "storage",
+          "resourceName": "questionsDb"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
   "hosting": {
     "S3AndCloudFront": {
       "providerPlugin": "awscloudformation",
       "service": "S3AndCloudFront"
     }
   },
-  "storage": {}
+  "parameters": {
+    "AMPLIFY_function_questionsFunction_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "questionsFunction"
+        }
+      ]
+    },
+    "AMPLIFY_function_questionsFunction_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "questionsFunction"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "questionsDb": {
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB"
+    }
+  }
 }

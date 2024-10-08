@@ -18,6 +18,18 @@
       },
       "auth": {
         "awsstudies": {}
+      },
+      "function": {
+        "questionsFunction": {
+          "deploymentBucketName": "amplify-awsstudies-dev-6b03d-deployment",
+          "s3Key": "amplify-builds/questionsFunction-2b4a5a3342764f435633-build.zip"
+        }
+      },
+      "api": {
+        "quizes": {}
+      },
+      "storage": {
+        "questionsDb": {}
       }
     }
   }

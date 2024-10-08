@@ -1,10 +1,15 @@
 import { del, get, post, put } from 'aws-amplify/api';
 import amplifyconfig from './amplifyconfiguration.json';
+import { Question } from './types';
+//
+import questions from './questions.json';
 
 const apiName = amplifyconfig.aws_cloud_logic_custom[0].name;
 const path = '/questions';
 
 export async function getQuestions() {
+  return questions;
+
   try {
     const restOperation = get({
       apiName,
@@ -12,40 +17,29 @@ export async function getQuestions() {
     });
 
     const { body } = await restOperation.response;
-    console.log('GET call succeeded: ', await body.json());
+    return (await body.json()) as Question[];
   } catch (error) {
     console.log('GET call failed: ', error);
+    return [];
   }
 }
 
-export async function createItem(item: any) {
-  item = {
-    id: 1,
-    question: 'Which of the following services are key/value stores? (Choose 3 answers)',
-    options: [
-      'Amazon ElastiCache.',
-      'Simple Notification Service.',
-      'DynamoDB.',
-      'Simple Workflow Service.',
-      'Simple Storage Service.',
-    ],
-    solutions: [0, 2, 4],
-  };
-
+export async function addQuestion(item: Question) {
   try {
     const restOperation = post({
       apiName,
       path,
       options: {
         body: item,
-        headers: {},
       },
     });
 
     const { body } = await restOperation.response;
-    console.log('POST call succeeded', await body.json());
-  } catch (error) {
-    console.log('POST call failed: ', error);
+    const response = await body.json();
+
+    console.log('POST call succeeded', response);
+  } catch (e) {
+    console.log('POST call failed: ', e);
   }
 }
 

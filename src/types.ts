@@ -1,5 +1,5 @@
 export type Question = {
-  id: number;
+  id: string;
   question: string;
   options: string[];
   solutions: number[];

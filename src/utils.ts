@@ -27,11 +27,11 @@ export function compareAnswers(questionList: Question[], history: string[][]) {
 
       return [[...acc[0], idx], acc[1], [...acc[2], next.id]];
     },
-    [[], [], []] as number[][]
+    [[], [], []] as any[][]
   );
 }
 
-export function filterQuestions(data: Question[], keywords: string[], excludeIds: number[]) {
+export function filterQuestions(data: Question[], keywords: string[], excludeIds: string[]) {
   const lowerKeywords = keywords.length ? keywords.map((keyword) => keyword.toLowerCase()) : [''];
 
   return data.filter(
