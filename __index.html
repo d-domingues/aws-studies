@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Quizz</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <script defer type="module" src="/src/main.ts"></script>
+  </head>
+
+  <body x-data="main" class="font-sans text-darkslategrey">
+    <template x-if="!lastStoragekey">
+      <form class="max-w-lg mx-auto mt-10 p-6 bg-white rounded shadow">
+        <!-- Number of Questions -->
+        <div class="mb-4">
+          <label class="block text-gray-700 mb-2">Nr. of Questions</label>
+          <div class="flex space-x-4">
+            <template x-for="item in ['10', '25', '40', '65']">
+              <label class="inline-flex items-center">
+                <input type="radio" name="nrOfQuestions" x-model="nrOfQuestions" :value="item" class="form-radio text-blue-600" />
+                <span class="ml-2" x-text="item"></span>
+              </label>
+            </template>
+          </div>
+        </div>
+
+        <!-- Topic Selector -->
+        <div class="mb-4">
+          <label for="filter" class="block text-gray-700">Filter</label>
+          <select
+            id="filter"
+            x-model="filter"
+            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+          >
+            <option value="new">New questions</option>
+            <option value="all">All questions</option>
+            <option value="hard">Failed questions</option>
+            <option value="insane">Very hard quetions</option>
+          </select>
+        </div>
+
+        <!-- Keywords -->
+        <div class="mb-4">
+          <label for="keywords" class="block text-gray-700">Keywords</label>
+          <input
+            type="text"
+            id="keywords"
+            x-model="keywords"
+            class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            placeholder="Enter keywords"
+          />
+        </div>
+
+        <!-- BEGIN -->
+        <button type="button" class="bg-blue-600 text-white py-1 px-2 rounded" @click="onStart()">START</button>
+
+        <button type="button" class="bg-blue-600 text-white py-1 px-2 rounded" @click="handleSignIn()">handleSignIn</button>
+      </form>
+    </template>
+
+    <template x-if="lastStoragekey && questions.length">
+      <form x-data="model" class="p-2">
+        <!-- SKIP BTN -->
+        <button type="button" x-show="!finished" @click="onSkipQuiz()" class="bg-blue-600 text-white py-1 px-2 rounded">
+          SKIP
+        </button>
+
+        <!-- UNDO BTN -->
+        <button x-show="answerIdx > 0" type="button" @click="onUndo()" class="bg-blue-600 text-white py-1 px-2 rounded">⤺</button>
+
+        <!-- RESTART BTN -->
+        <button type="button" x-show="finished" @click="onRestartQuiz()" class="bg-blue-600 text-white py-1 px-2 rounded">
+          ↺
+        </button>
+
+        <!-- CANCEL BTN -->
+        <button type="button" @click="onCancel()" class="bg-red-600 text-white py-1 px-2 rounded">X</button>
+
+        <!-- PROGRESS BAR -->
+        <progress
+          value="0"
+          :value="`${finished ? questionList.length : answerIdx }`"
+          :max="questionList.length"
+          class="w-full h-2 bg-blue-200 [&::-webkit-progress-value]:bg-blue-600 [&::-moz-progress-bar]:bg-blue-600 [&::-webkit-progress-bar]:bg-blue-200"
+        ></progress>
+
+        <!-- RESULTS -->
+        <template x-if="finished">
+          <div class="mb-4" x-data="resultComp">
+            <b>Correct count:</b>
+            <span x-text="correctLabel"></span><br />
+            <b>Wrong:</b>
+            <span x-show="!wrongQstIdxs.length">None</span>
+            <template x-for="section in wrongQstIdxs" :key="section">
+              <a
+                class="inline-block w-5 h-5 mr-1 text-center leading-5 text-xs font-medium text-white bg-red-500 rounded"
+                :href="`#section${section}`"
+                x-text="section + 1"
+              ></a>
+            </template>
+            <br />
+            <b>Rate:</b> <span x-text="rateLabel"></span>
+          </div>
+        </template>
+
+        <!-- QUESTIONS FOR LOOP -->
+        <template x-for="(item, index) in questionList" :key="index">
+          <template x-if="answerIdx >= index || finished">
+            <ul
+              :id="`section${index}`"
+              x-transition
+              x-show="index == answerIdx || finished"
+              x-data="{ isWrong: wrongQstIdxs.includes(index) }"
+              x-init="$nextTick(() => {
+                shuffleNodes();
+                $watch('wrongQstIdxs', value => isWrong = value.includes(index))
+              })"
+              :class="{
+                'list-none p-2 rounded-lg bg-blue-50 ring-2 ring-blue-600 ring-inset': true,
+                'min-h-[calc(100dvh_-_4.5rem)]': !finished,
+                'mb-2': finished,
+                'bg-gray-50 ring-red-800': isWrong
+              }"
+            >
+              <strong
+                :class="{ 'block text-blue-600': true, 'text-red-900': isWrong }"
+                x-text="`Question ${index + 1}:`"
+              ></strong>
+              <span x-text="item.question"></span>
+
+              <!-- OPTIONS FOR LOOP -->
+              <template x-for="(opt, optIdx) in item.options" :key="optIdx">
+                <li
+                  x-id="['opt']"
+                  :class="{ 'my-1 p-1 rounded': true, 'bg-gray-300 ring-1 ring-gray-400': item.solutions.includes(optIdx) && finished }"
+                >
+                  <input
+                    type="checkbox"
+                    :id="$id('opt')"
+                    :value="optIdx"
+                    :disabled="finished"
+                    x-model="history[index]"
+                    class="w-4 h-4 accent-blue-600 rounded align-sub"
+                  />
+                  <label
+                    x-text="opt"
+                    :for="$id('opt')"
+                    :class="{ 'text-sm': true, 'text-gray-500': !item.solutions.includes(optIdx) && finished }"
+                  ></label>
+                </li>
+              </template>
+            </ul>
+          </template>
+        </template>
+
+        <!--         <pre x-text="JSON.stringify($data, null, 2)"></pre>
+        <pre x-text="JSON.stringify($root, null, 2)"></pre> -->
+      </form>
+    </template>
+
+    <!--     <pre x-text="JSON.stringify($data, null, 2)"></pre>
+    <pre x-text="JSON.stringify($root, null, 2)"></pre> -->
+  </body>
+</html>
