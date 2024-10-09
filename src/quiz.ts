@@ -4,7 +4,7 @@ import Alpine from 'alpinejs';
 import '../style.css';
 // import amplifyconfig from './amplifyconfiguration.json'; // Path may vary
 import { QuestionsWithAnswers } from './types';
-import { compareAnswers, fisherYatesShuffle } from './utils';
+import { fisherYatesShuffle } from './utils';
 
 // Amplify.configure(amplifyconfig);
 Alpine.plugin(persist);
@@ -58,9 +58,10 @@ Alpine.data('quiz', () => ({
     this.questions[this.answerIdx - 1].answers = [];
   },
 
+  /* EACH ITEM */
   itemComponent: {
     ['x-init']() {
-      this.$watch('item', (value: QuestionsWithAnswers & { isCorrect: boolean }) => {
+      this.$watch('item', (value: QuestionsWithAnswers) => {
         value.isCorrect = value.solutions.every((a) => value.answers.includes('' + a));
       });
 
@@ -89,39 +90,27 @@ Alpine.data('quiz', () => ({
 
     ['x-transition']: true,
   } as any,
-}));
 
-/**
- *
- * RESULTS
- *
- */
-Alpine.data(
-  'results',
-  () =>
-    ({
+  /* RESULTS */
+  resultsComponent: {
+    ['x-data']: () => ({
+      failed: [],
       correctLabel: '',
       rateLabel: '',
 
       init() {
-        const [wrongQstIdxs, rightQstIds] = compareAnswers(this.questions, this.history);
+        if (!this.questions) return;
 
-        const correct = this.questions.length - wrongQstIdxs.length;
+        this.failed = this.questions.filter((q: QuestionsWithAnswers) => !q.isCorrect);
 
-        const rate = Math.floor((correct / this.questions.length) * 100);
+        const correct = this.questions.filter((q: QuestionsWithAnswers) => q.isCorrect);
+        const rate = Math.floor((correct?.length / this.questions.length) * 100);
 
-        // upper scope wrongQstIdxs
-        this.wrongQstIdxs = wrongQstIdxs;
-
-        this.correctLabel = `${correct} of ${this.questions.length}`;
-
+        this.correctLabel = `${correct.length} of ${this.questions.length}`;
         this.rateLabel = `${rate}% (${rate >= 70 ? 'PASS 🏆' : 'FAIL 💔'})`;
-
-        if (rightQstIds.length) {
-          //  this.reaIndexes[new Date().toISOString()] = rightQstIds;
-        }
       },
-    } as any)
-);
+    }),
+  },
+}));
 
 Alpine.start();

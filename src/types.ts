@@ -5,4 +5,7 @@ export type Question = {
   solutions: number[];
 };
 
-export type QuestionsWithAnswers = Question & { answers: string[] };
+export type QuestionsWithAnswers = Question & {
+  answers: string[];
+  isCorrect: boolean;
+};

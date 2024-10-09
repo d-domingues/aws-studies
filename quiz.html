@@ -32,37 +32,33 @@
         class="w-full h-2 bg-blue-200 [&::-webkit-progress-value]:bg-blue-600 [&::-moz-progress-bar]:bg-blue-600 [&::-webkit-progress-bar]:bg-blue-200"
       ></progress>
 
-      <!-- 
-      RESULTS 
-      -->
-      <!--       <template x-if="finished">
-        <div class="mb-4" x-data="results">
+      <!-- RESULTS -->
+      <template x-if="finished">
+        <div class="mb-4" x-bind="resultsComponent">
           <b>Correct count:</b>
           <span x-text="correctLabel"></span><br />
           <b>Wrong:</b>
-          <span x-show="!wrongQstIdxs.length">None</span>
-          <template x-for="section in wrongQstIdxs" :key="section">
+          <span x-show="!failed.length">None</span>
+          <template x-for="(question, idx) in questions" :key="question.id">
             <a
               class="inline-block w-5 h-5 mr-1 text-center leading-5 text-xs font-medium text-white bg-red-500 rounded"
-              :href="`#section${section}`"
-              x-text="section + 1"
+              :href="`#section${idx}`"
+              x-show="!question.isCorrect"
+              x-text="idx+1"
             ></a>
           </template>
           <br />
           <b>Rate:</b> <span x-text="rateLabel"></span>
         </div>
-      </template> -->
+      </template>
 
-      <!-- 
-      
-      -->
       <!-- QUESTIONS FOR LOOP -->
       <template x-for="(item, index) in questions" :key="index">
         <template x-if="answerIdx >= index || finished">
           <ul x-bind="itemComponent">
             <strong
-              :class="{ 'block text-blue-600': true, 'text-red-900': !item.isCorrect && finished }"
               x-text="`Question ${index + 1}:`"
+              :class="{ 'block text-blue-600': true, 'text-red-900': !item.isCorrect && finished }"
             ></strong>
             <span x-text="item.question"></span>
 
@@ -87,8 +83,6 @@
                 ></label>
               </li>
             </template>
-
-            <!--  <pre x-text="JSON.stringify(item, null, 2)"></pre> -->
           </ul>
         </template>
       </template>

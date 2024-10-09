@@ -8,7 +8,7 @@ const path = '/questions';
 import questions from './questions.json';
 
 export async function getQuestions() {
-  return questions.slice(0, 5);
+  return questions.slice(5, 12);
 
   /* try {
     const restOperation = get({
