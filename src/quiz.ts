@@ -10,6 +10,10 @@ import { compareAnswers, fisherYatesShuffle } from './utils';
 Alpine.plugin(persist);
 window.Alpine = Alpine;
 
+function goToSetup() {
+  window.location.href = '/';
+}
+
 /**
  *
  * QUIZ
@@ -22,24 +26,19 @@ Alpine.data('quiz', () => ({
 
   init() {
     if (!this.questions) {
-      return (window.location.href = '/');
+      return goToSetup();
     }
 
     this.$watch('answerIdx', (value: number) => (this.finished = value < 0));
 
     const updateAnswerIdx = (questions: QuestionsWithAnswers[]) =>
-      (this.answerIdx = questions?.findIndex((q) => q.answers.length < q.solutions.length));
+      (this.answerIdx = questions.findIndex((q) => q.answers.length < q.solutions.length));
 
     this.$watch('questions', updateAnswerIdx as any);
 
     updateAnswerIdx(this.questions);
   },
 
-  /*   shuffleNodes() {
-    const shuffled = fisherYatesShuffle([...this.$el.children].filter((el) => el.tagName == 'LI'));
-    shuffled.forEach((child) => this.$el.appendChild(child));
-  },
- */
   onRestartQuiz() {
     if (!this.questions) return;
     this.questions = this.questions.map((q) => ({ ...q, answers: [] }));
@@ -51,6 +50,7 @@ Alpine.data('quiz', () => ({
 
   onCancel() {
     this.questions = null;
+    return goToSetup();
   },
 
   onUndo() {
@@ -59,20 +59,36 @@ Alpine.data('quiz', () => ({
   },
 
   itemComponent: {
-    init() {
-      console.log((this as any).item);
-
-      const shuffled = fisherYatesShuffle([...this.$el.children].filter((el) => el.tagName == 'LI'));
-
-      shuffled.forEach((child) => this.$el.appendChild(child));
-
+    ['x-init']() {
       this.$watch('item', (value: QuestionsWithAnswers & { isCorrect: boolean }) => {
         value.isCorrect = value.solutions.every((a) => value.answers.includes('' + a));
       });
+
+      this.$nextTick(() => {
+        const shuffled = fisherYatesShuffle([...this.$el.children].filter((el) => el.tagName == 'LI'));
+        shuffled.forEach((child) => this.$el.appendChild(child));
+      });
     },
 
-    attrs: {},
-  },
+    [':id']() {
+      return `section${this.index}`;
+    },
+
+    ['x-show']() {
+      return this.index == this.answerIdx || this.finished;
+    },
+
+    [':class']() {
+      return {
+        'list-none p-2 rounded-lg bg-blue-50 ring-2 ring-blue-600 ring-inset': true,
+        'bg-gray-50 ring-red-800': !this.item.isCorrect && this.finished,
+        'min-h-[calc(100dvh_-_4.5rem)]': !this.finished,
+        'mb-2': this.finished,
+      };
+    },
+
+    ['x-transition']: true,
+  } as any,
 }));
 
 /**

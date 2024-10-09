@@ -59,20 +59,11 @@
       <!-- QUESTIONS FOR LOOP -->
       <template x-for="(item, index) in questions" :key="index">
         <template x-if="answerIdx >= index || finished">
-          <ul
-            x-data="itemComponent"
-            x-bind="attrs"
-            :id="`section${index}`"
-            x-transition
-            x-show="index == answerIdx || finished"
-            :class="{
-          'list-none p-2 rounded-lg bg-blue-50 ring-2 ring-blue-600 ring-inset': true,
-          'min-h-[calc(100dvh_-_4.5rem)]': !finished,
-          'mb-2': finished,
-          'bg-gray-50 ring-red-800': true
-        }"
-          >
-            <strong :class="{ 'block text-blue-600': true, 'text-red-900': true }" x-text="`Question ${index + 1}:`"></strong>
+          <ul x-bind="itemComponent">
+            <strong
+              :class="{ 'block text-blue-600': true, 'text-red-900': !item.isCorrect && finished }"
+              x-text="`Question ${index + 1}:`"
+            ></strong>
             <span x-text="item.question"></span>
 
             <!-- OPTIONS FOR LOOP -->
@@ -97,7 +88,7 @@
               </li>
             </template>
 
-            <pre x-text="JSON.stringify(item, null, 2)"></pre>
+            <!--  <pre x-text="JSON.stringify(item, null, 2)"></pre> -->
           </ul>
         </template>
       </template>
