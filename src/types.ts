@@ -4,3 +4,5 @@ export type Question = {
   options: string[];
   solutions: number[];
 };
+
+export type QuestionsWithAnswers = Question & { answers: string[] };

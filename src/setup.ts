@@ -4,8 +4,7 @@ import { Amplify } from 'aws-amplify';
 import '../style.css';
 //import amplifyconfig from './amplifyconfiguration.json'; // Path may vary
 import { getQuestions } from './api';
-import { Question } from './types';
-import { filterQuestions } from './utils';
+import { Question, QuestionsWithAnswers } from './types';
 
 Amplify.configure({} /* amplifyconfig */);
 Alpine.plugin(persist);
@@ -17,8 +16,7 @@ window.Alpine = Alpine;
  *
  */
 Alpine.data('setup', () => ({
-  questions: [] as Question[],
-  history: Alpine.$persist<string[][] | null>(null).as('history'),
+  questions: Alpine.$persist<QuestionsWithAnswers[] | null>(null).as('questions'),
 
   nrOfQuestions: Alpine.$persist(65),
   filter: Alpine.$persist('all'), // new, all, hard, insane
@@ -28,13 +26,13 @@ Alpine.data('setup', () => ({
   wrongQstIdxs: [] as number[],
 
   async init() {
-    this.questions = await getQuestions();
+    if (this.questions) return (window.location.href = 'quiz.html');
   },
 
   async onStart() {
-    const q = await getQuestions();
-
-    console.log(q);
+    const questions = await getQuestions();
+    this.questions = questions.map((q) => ({ ...q, answers: [] }));
+    window.location.href = 'quiz.html';
   },
 
   goNormal() {
@@ -49,13 +47,13 @@ Alpine.data('setup', () => ({
       includeKeywords = this.keywords.split(',');
     }
 
-    const result = filterQuestions(this.questions, includeKeywords, excludeIdx).sort(() => 0.5 - Math.random());
+    /*     const result = filterQuestions(questions, includeKeywords, excludeIdx).sort(() => 0.5 - Math.random());
     if (!result.length) {
       return alert('No questions left');
     }
 
     this.questionList = result.slice(0, this.nrOfQuestions);
-    this.history = Array.from({ length: this.questionList.length }, () => []) as string[][];
+    this.questions = Array.from({ length: this.questionList.length }, () => []) as string[][]; */
   },
 }));
 

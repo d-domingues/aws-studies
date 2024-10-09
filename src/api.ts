@@ -5,10 +5,12 @@ import { Question } from './types';
 const apiName = ''; // amplifyconfig.aws_cloud_logic_custom[0].name;
 const path = '/questions';
 
-export async function getQuestions() {
-  // return questions;
+import questions from './questions.json';
 
-  try {
+export async function getQuestions() {
+  return questions.slice(0, 5);
+
+  /* try {
     const restOperation = get({
       apiName,
       path,
@@ -19,7 +21,7 @@ export async function getQuestions() {
   } catch (error) {
     console.log('GET call failed: ', error);
     return [];
-  }
+  } */
 }
 
 export async function addQuestion(item: Question) {
