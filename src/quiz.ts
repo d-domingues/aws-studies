@@ -44,10 +44,6 @@ Alpine.data('quiz', () => ({
     this.questions = this.questions.map((q) => ({ ...q, answers: [] }));
   },
 
-  onSkipQuiz() {
-    this.answerIdx = -1;
-  },
-
   onCancel() {
     this.questions = null;
     return goToSetup();

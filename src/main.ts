@@ -31,7 +31,7 @@ Alpine.data('setup', () => ({
 
   async onStart() {
     const questions = await getQuestions();
-    this.questions = questions.map((q) => ({ ...q, answers: [] }));
+    this.questions = questions.map((q) => ({ ...q, answers: [], isCorrect: false }));
     window.location.href = 'quiz.html';
   },
 
