@@ -35,8 +35,7 @@ Alpine.data('setup', () => ({
 
     if (this.questions) {
       console.log('> going to quiz');
-      return;
-      // return (window.location.href = 'quiz.html');
+      return (window.location.href = 'quiz.html');
     }
   },
 
@@ -84,8 +83,7 @@ Alpine.data('quiz', () => ({
 
     if (!this.questions) {
       console.log('> going to setup');
-      return;
-      // return goToSetup();
+      return goToSetup();
     }
 
     this.$watch('answerIdx', (value: number) => (this.finished = value < 0));
